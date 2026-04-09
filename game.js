@@ -152,38 +152,69 @@ class BootScene extends Phaser.Scene {
   _generateTextures() {
     const g = this.make.graphics({ x:0, y:0, add:false });
 
-    // ══ PLAYER  64×64  armoured mystic warrior ══
+    // ══ PLAYER  64×64  dark-robed mage (top-down) ══
     g.clear();
-    g.fillStyle(0x0022bb,0.20); g.fillCircle(32,32,31);
-    g.lineStyle(2,0x4488ff,0.55); g.strokeCircle(32,32,29);
-    g.fillStyle(0x0a1a55,1); g.fillCircle(32,32,22);
-    g.fillStyle(0x1a3a99,1); g.fillEllipse(32,36,28,30);
-    g.fillStyle(0x0d2a77,1); g.fillEllipse(14,30,13,17); g.fillEllipse(50,30,13,17);
-    g.fillStyle(0x1133aa,1); g.fillCircle(32,19,13);
-    g.fillStyle(0x0d2277,1); g.fillRect(21,10,22,11);
-    g.fillStyle(0x00ccff,1); g.fillRect(23,15,18,4);
-    g.fillStyle(0xaaeeff,0.9); g.fillRect(24,16,5,2); g.fillRect(34,16,5,2);
-    g.fillStyle(0x2255cc,1); g.fillCircle(32,37,10);
-    g.fillStyle(0x55aaff,1); g.fillCircle(32,37,6);
-    g.fillStyle(0xccddff,1); g.fillCircle(32,37,3);
-    g.lineStyle(2,0x4488ff,0.65); g.lineBetween(12,32,20,37); g.lineBetween(52,32,44,37);
+    // Outer aura glow
+    g.fillStyle(0x0033cc,0.18); g.fillCircle(32,32,31);
+    g.fillStyle(0x0055ff,0.10); g.fillCircle(32,32,28);
+    // Dark robe body - cloak shape
+    g.fillStyle(0x0d0d22,1); g.fillEllipse(32,38,36,42);
+    // Robe folds / layered cloak edges
+    g.fillStyle(0x14143a,1); g.fillTriangle(14,50,20,30,26,52);
+    g.fillStyle(0x14143a,1); g.fillTriangle(50,50,44,30,38,52);
+    g.fillStyle(0x1c1c50,0.7); g.fillTriangle(20,48,26,28,32,48);
+    g.fillStyle(0x1c1c50,0.7); g.fillTriangle(44,48,38,28,32,48);
+    // Glowing energy runes on robe
+    g.fillStyle(0x2266ff,0.75); g.fillRect(28,34,8,12);
+    g.lineStyle(1,0x55aaff,0.8); g.lineBetween(32,34,32,46); g.lineBetween(28,40,36,40);
+    // Arms holding weapon
+    g.fillStyle(0x0d1a44,1); g.fillEllipse(16,34,12,22); g.fillEllipse(48,34,12,22);
+    // Glowing bracers
+    g.lineStyle(2,0x3377ff,0.9); g.strokeRect(11,30,10,7); g.strokeRect(43,30,10,7);
+    g.fillStyle(0x0044bb,0.8); g.fillRect(12,31,8,5); g.fillRect(44,31,8,5);
+    // Head/hood - dark pointed hood
+    g.fillStyle(0x0d0d22,1); g.fillCircle(32,18,15);
+    g.fillStyle(0x060614,1); g.fillTriangle(22,12,32,1,42,12); // hood peak
+    g.fillStyle(0x0d0d22,1); g.fillTriangle(23,13,32,4,41,13);
+    // Face shadow within hood
+    g.fillStyle(0x050510,0.9); g.fillEllipse(32,20,20,16);
+    // Glowing blue eyes
+    g.fillStyle(0x00aaff,1); g.fillCircle(26,18,3.5); g.fillCircle(38,18,3.5);
+    g.fillStyle(0x66ddff,1); g.fillCircle(26,17,2); g.fillCircle(38,17,2);
+    g.fillStyle(0xffffff,0.9); g.fillCircle(26,17,1); g.fillCircle(38,17,1);
+    // Blue energy swirls around body
+    g.lineStyle(2,0x0066ff,0.55); g.strokeCircle(32,38,16);
+    g.lineStyle(1,0x3399ff,0.45); g.strokeEllipse(32,38,26,22);
+    g.fillStyle(0x0055ee,0.60); g.fillCircle(28,34,3); g.fillCircle(36,34,3);
+    g.fillStyle(0x22aaff,0.80); g.fillCircle(28,34,1.5); g.fillCircle(36,34,1.5);
+    // Dagger in right hand
+    g.fillStyle(0xaabbcc,1); g.fillTriangle(50,22,47,30,53,30);
+    g.fillStyle(0x888899,1); g.fillRect(47,30,6,5);
+    g.fillStyle(0xccddff,0.9); g.fillTriangle(50,22,49,28,51,28);
+    g.lineStyle(1,0x4488ff,0.7); g.lineBetween(46,28,54,28);
     g.generateTexture('player',64,64);
 
     // ══ BULLETS ══
-    // Dagger – blue icy shard
+    // Dagger – blue energy bolt (matches player's blue energy)
     g.clear();
-    g.fillStyle(0x2244ff,0.45); g.fillEllipse(10,5,24,13);
-    g.fillStyle(0x5588ff,1);    g.fillEllipse(10,5,18,7);
-    g.fillStyle(0xaaccff,1);    g.fillEllipse(8,4,10,4);
-    g.fillStyle(0xffffff,0.9);  g.fillEllipse(5,3,5,3);
-    g.generateTexture('bullet_dagger',20,10);
-    // Bow – green arrow
+    g.fillStyle(0x0033aa,0.40); g.fillEllipse(10,5,26,14);
+    g.fillStyle(0x1155dd,1);    g.fillEllipse(10,5,20,8);
+    g.fillStyle(0x44aaff,1);    g.fillEllipse(8,4,12,5);
+    g.fillStyle(0xaaddff,1);    g.fillEllipse(5,3.5,7,4);
+    g.fillStyle(0xffffff,0.95); g.fillEllipse(3,3,4,3);
+    // Arrowhead tip
+    g.fillStyle(0x88ccff,1);    g.fillTriangle(18,2,22,5,18,8);
+    g.generateTexture('bullet_dagger',24,10);
+    // Bow – red glowing arrow
     g.clear();
-    g.fillStyle(0x22bb55,0.45); g.fillEllipse(12,4,28,11);
-    g.fillStyle(0x44ff88,1);    g.fillEllipse(12,4,22,5);
-    g.fillStyle(0xccffee,1);    g.fillEllipse(8,3,8,3);
-    g.fillStyle(0xffffff,0.85); g.fillTriangle(21,1,26,4,21,7);
-    g.generateTexture('bullet_bow',28,8);
+    g.fillStyle(0x660000,0.40); g.fillEllipse(14,4,30,12);
+    g.fillStyle(0xcc1100,1);    g.fillEllipse(14,4,22,6);
+    g.fillStyle(0xff4422,1);    g.fillEllipse(10,3.5,12,4);
+    g.fillStyle(0xff9966,0.9);  g.fillEllipse(6,3,7,3);
+    g.fillStyle(0xffddcc,0.8);  g.fillEllipse(3,3,4,2.5);
+    // Red arrowhead
+    g.fillStyle(0xff6644,1);    g.fillTriangle(24,2,30,4,24,6);
+    g.generateTexture('bullet_bow',32,8);
     // Axe – fiery disc
     g.clear();
     g.fillStyle(0xcc2200,0.45); g.fillEllipse(13,13,30,30);
@@ -202,70 +233,152 @@ class BootScene extends Phaser.Scene {
     g.generateTexture('bullet_staff',24,24);
 
     // ══ ENEMIES – unique detailed silhouettes ══
-    // ZOMBIE 52×62
+    // ZOMBIE → Shadow Creeper 52×62 – dark smoky humanoid, purple glowing eyes
     g.clear();
-    g.fillStyle(0x003300,0.30); g.fillCircle(26,32,26);
-    g.fillStyle(0x1a3a1a,1);   g.fillEllipse(26,40,26,32);
-    g.fillStyle(0x112211,0.80); g.fillCircle(18,40,5); g.fillCircle(32,44,4); g.fillCircle(24,48,3);
-    g.fillStyle(0x2a5a2a,1);   g.fillCircle(26,17,13);
-    g.fillStyle(0x1a3a1a,1);   g.fillRect(22,26,8,8);
-    g.fillStyle(0x1e421e,1);   g.fillRect(4,30,9,5); g.fillRect(39,30,9,5); g.fillRect(2,35,5,4); g.fillRect(45,35,5,4);
-    g.fillStyle(0x550000,1);   g.fillCircle(21,15,5); g.fillCircle(31,15,5);
-    g.fillStyle(0xff2222,1);   g.fillCircle(21,15,3); g.fillCircle(31,15,3);
-    g.fillStyle(0xff8888,0.8); g.fillCircle(21,14,1.5); g.fillCircle(31,14,1.5);
-    g.fillStyle(0x000000,1);   g.fillRect(19,22,14,4);
-    g.fillStyle(0xffffff,0.8); g.fillRect(20,22,2,3); g.fillRect(23,22,2,3); g.fillRect(26,22,2,3); g.fillRect(29,22,2,3);
+    // Smoke/shadow aura
+    g.fillStyle(0x220033,0.35); g.fillCircle(26,32,28);
+    g.fillStyle(0x110022,0.50); g.fillCircle(26,32,22);
+    // Body – dark shadowy form
+    g.fillStyle(0x0d0015,1); g.fillEllipse(26,40,24,34);
+    // Smoke tendrils extending from bottom
+    g.fillStyle(0x1a0030,0.7); g.fillTriangle(14,52,18,36,10,60); g.fillTriangle(38,52,34,36,42,60);
+    g.fillStyle(0x220044,0.5); g.fillTriangle(22,55,24,40,16,60); g.fillTriangle(30,55,28,40,36,60);
+    // Wispy side tendrils
+    g.fillStyle(0x2a0050,0.55); g.fillEllipse(6,36,12,18); g.fillEllipse(46,36,12,18);
+    g.fillStyle(0x1a003a,0.4); g.fillEllipse(2,32,8,14); g.fillEllipse(50,32,8,14);
+    // Head – dark smoky blob
+    g.fillStyle(0x0d001a,1); g.fillCircle(26,17,14);
+    g.fillStyle(0x1a0030,0.8); g.fillCircle(26,17,11);
+    // Purple glowing eyes
+    g.fillStyle(0x440066,1); g.fillCircle(20,15,5.5); g.fillCircle(32,15,5.5);
+    g.fillStyle(0x9900ff,1); g.fillCircle(20,15,3.5); g.fillCircle(32,15,3.5);
+    g.fillStyle(0xcc66ff,1); g.fillCircle(20,14,2); g.fillCircle(32,14,2);
+    g.fillStyle(0xffffff,0.85); g.fillCircle(20,14,1); g.fillCircle(32,14,1);
+    // Jagged grin
+    g.fillStyle(0xaa00ff,0.6); g.fillRect(19,21,14,3);
+    g.fillStyle(0x000000,1); g.fillTriangle(20,21,22,24,24,21); g.fillTriangle(25,21,27,24,29,21); g.fillTriangle(30,21,32,24,34,21);
+    // Chest cracks with purple glow
+    g.lineStyle(2,0x7700bb,0.8); g.lineBetween(22,30,24,38); g.lineBetween(28,32,30,40);
+    g.lineStyle(1,0xaa44ff,0.6); g.lineBetween(24,32,28,36);
     g.generateTexture('enemy_zombie',52,62);
-    // RUNNER 44×52
+
+    // RUNNER → Shadow Runner 44×52 – small dark creature, orange ember eyes, trailing wisps
     g.clear();
-    g.fillStyle(0x886600,0.28); g.fillEllipse(22,27,44,52);
-    g.fillStyle(0x9a7000,1);   g.fillEllipse(22,34,18,28);
-    g.fillStyle(0xbb8800,1);   g.fillCircle(22,14,12);
-    g.fillStyle(0x664400,1);   g.fillTriangle(15,9,12,0,19,9); g.fillTriangle(29,9,25,9,32,0);
-    g.fillStyle(0xffcc00,1);   g.fillCircle(18,13,4); g.fillCircle(26,13,4);
-    g.fillStyle(0xff7700,1);   g.fillCircle(18,13,2); g.fillCircle(26,13,2);
-    g.lineStyle(2,0xffdd44,0.45); g.lineBetween(1,28,9,28); g.lineBetween(1,33,7,33); g.lineBetween(1,38,9,38);
-    g.fillStyle(0x553300,1);   g.fillTriangle(5,44,3,52,10,44); g.fillTriangle(34,44,39,52,42,44);
+    g.fillStyle(0x1a0a00,0.32); g.fillEllipse(22,27,44,52);
+    // Hunched, fast-moving dark body
+    g.fillStyle(0x100800,1); g.fillEllipse(22,34,20,26);
+    g.fillStyle(0x1c1000,1); g.fillCircle(22,14,11);
+    // Jagged spiky outline
+    g.fillStyle(0x0d0600,1); g.fillTriangle(14,10,10,2,18,10); g.fillTriangle(30,10,26,2,33,10);
+    g.fillStyle(0x1a0d00,0.8); g.fillTriangle(8,18,3,10,12,18); g.fillTriangle(36,18,32,10,42,18);
+    // Orange ember eyes
+    g.fillStyle(0x552200,1); g.fillCircle(18,13,4.5); g.fillCircle(26,13,4.5);
+    g.fillStyle(0xff6600,1); g.fillCircle(18,13,3); g.fillCircle(26,13,3);
+    g.fillStyle(0xffaa44,1); g.fillCircle(18,12,1.5); g.fillCircle(26,12,1.5);
+    g.fillStyle(0xffffff,0.7); g.fillCircle(18,12,0.8); g.fillCircle(26,12,0.8);
+    // Speed trail wisps on sides
+    g.fillStyle(0xff4400,0.3); g.fillEllipse(5,28,10,6); g.fillEllipse(5,33,8,5); g.fillEllipse(5,38,10,6);
+    g.fillStyle(0xff6600,0.2); g.fillEllipse(2,30,6,4); g.fillEllipse(2,36,6,4);
+    // Clawed feet
+    g.fillStyle(0x0d0600,1); g.fillTriangle(10,44,6,52,14,44); g.fillTriangle(34,44,30,52,38,44);
     g.generateTexture('enemy_runner',44,52);
-    // RANGED 52×60
+
+    // RANGED → Shadow Archer 52×60 – dark hooded figure, energy bow, cyan eyes
     g.clear();
-    g.fillStyle(0x003366,0.28); g.fillCircle(26,30,26);
-    g.fillStyle(0x112244,1);   g.fillEllipse(26,40,24,32);
-    g.fillStyle(0x1a3366,1);   g.fillCircle(26,16,13); g.fillTriangle(20,8,26,0,32,8);
-    g.fillStyle(0x000011,0.85); g.fillEllipse(26,17,18,14);
-    g.fillStyle(0x0066ff,1);   g.fillCircle(21,15,3.5); g.fillCircle(31,15,3.5);
-    g.fillStyle(0x88ccff,1);   g.fillCircle(21,14,1.8); g.fillCircle(31,14,1.8);
-    g.fillStyle(0x8b6914,1);   g.fillRect(6,22,4,28); g.fillRect(4,22,4,5); g.fillRect(4,45,4,5);
-    g.lineStyle(2,0xccaa44,0.8); g.lineBetween(10,36,38,28);
-    g.fillStyle(0xccaa44,1);   g.fillTriangle(37,26,42,28,37,30);
+    g.fillStyle(0x001122,0.30); g.fillCircle(26,30,26);
+    // Hooded robe body
+    g.fillStyle(0x060e1a,1); g.fillEllipse(26,40,26,32);
+    g.fillStyle(0x0a1828,1); g.fillCircle(26,17,13);
+    // Pointed hood
+    g.fillStyle(0x060e1a,1); g.fillTriangle(18,10,26,0,34,10);
+    g.fillStyle(0x0d1e33,0.7); g.fillTriangle(20,11,26,2,32,11);
+    // Face in shadow
+    g.fillStyle(0x030810,0.9); g.fillEllipse(26,18,20,14);
+    // Glowing cyan eyes
+    g.fillStyle(0x004455,1); g.fillCircle(21,16,4); g.fillCircle(31,16,4);
+    g.fillStyle(0x00ccdd,1); g.fillCircle(21,16,2.5); g.fillCircle(31,16,2.5);
+    g.fillStyle(0x88eeff,1); g.fillCircle(21,15,1.2); g.fillCircle(31,15,1.2);
+    // Energy bow (glowing cyan arc)
+    g.fillStyle(0x003344,1); g.fillRect(8,20,5,30); g.fillRect(6,20,5,5); g.fillRect(6,45,5,5);
+    g.lineStyle(2,0x00aacc,0.9); g.strokeEllipse(13,35,14,30);
+    g.lineStyle(2,0x00ddff,0.8); g.lineBetween(11,22,11,48);
+    // Arrow nocked (energy bolt)
+    g.fillStyle(0x00ccff,0.8); g.fillRect(13,32,22,3);
+    g.fillStyle(0x00ffff,1); g.fillTriangle(34,30,40,33.5,34,37);
     g.generateTexture('enemy_ranged',52,60);
-    // TANK 72×72
+
+    // TANK → Void Titan 72×72 – massive dark armored golem, red lava cracks
     g.clear();
-    g.fillStyle(0x111111,0.50); g.fillEllipse(36,68,58,12);
-    g.fillStyle(0x2a2a3a,1);   g.fillRect(8,22,56,44);
-    g.fillStyle(0x3e3e50,1);   g.fillRect(10,24,26,20); g.fillRect(36,24,26,20); g.fillRect(10,46,26,18); g.fillRect(36,46,26,18);
-    g.fillStyle(0x7a7a8a,1);   [13,23,35,47,59].forEach(rx=>[27,35,49,57].forEach(ry=>g.fillCircle(rx,ry,2)));
-    g.fillStyle(0x1e1e2e,1);   g.fillEllipse(36,22,38,24);
-    g.fillStyle(0x001100,1);   g.fillRect(17,15,38,9);
-    g.fillStyle(0x00ff44,1);   g.fillRect(19,16,15,7); g.fillRect(38,16,15,7);
-    g.fillStyle(0x88ff99,0.6); g.fillRect(21,17,9,4); g.fillRect(40,17,9,4);
-    g.fillStyle(0x1e1e2e,1);   g.fillTriangle(8,22,0,12,8,30); g.fillTriangle(64,22,72,12,64,30);
+    // Shadow under body
+    g.fillStyle(0x110000,0.55); g.fillEllipse(36,68,60,12);
+    // Massive armored torso
+    g.fillStyle(0x0d0d0d,1); g.fillRect(10,20,52,46);
+    // Armor plate segments
+    g.fillStyle(0x1a1a1a,1); g.fillRect(12,22,24,20); g.fillRect(36,22,24,20);
+    g.fillStyle(0x1a1a1a,1); g.fillRect(12,44,24,20); g.fillRect(36,44,24,20);
+    // Armor rivets
+    g.fillStyle(0x444444,1); [16,24,40,48,58].forEach(rx=>[28,36,50,58].forEach(ry=>g.fillCircle(rx,ry,2.2)));
+    // Head – dark helmet
+    g.fillStyle(0x0d0d0d,1); g.fillEllipse(36,20,40,26);
+    // Horn spikes on top
+    g.fillStyle(0x111111,1); g.fillTriangle(22,14,18,2,27,14); g.fillTriangle(36,12,33,0,39,12); g.fillTriangle(50,14,45,2,54,14);
+    g.fillStyle(0x221111,0.8); g.fillTriangle(23,14,19,4,27,14); g.fillTriangle(36,12,33,2,39,12); g.fillTriangle(51,14,46,4,54,14);
+    // Red glowing eyes (lava)
+    g.fillStyle(0x330000,1); g.fillRect(20,15,14,7); g.fillRect(38,15,14,7);
+    g.fillStyle(0xff2200,1); g.fillRect(22,16,10,5); g.fillRect(40,16,10,5);
+    g.fillStyle(0xff7755,0.7); g.fillRect(23,17,8,3); g.fillRect(41,17,8,3);
+    // Lava crack lines on body (red glowing)
+    g.lineStyle(2,0xff3300,0.85); g.lineBetween(24,28,28,38); g.lineBetween(44,28,40,38);
+    g.lineStyle(2,0xff4400,0.75); g.lineBetween(28,38,36,44); g.lineBetween(40,38,36,44);
+    g.lineStyle(1,0xff6600,0.60); g.lineBetween(20,34,26,42); g.lineBetween(52,34,46,42);
+    g.lineStyle(1,0xff8800,0.50); g.lineBetween(32,22,30,34); g.lineBetween(40,22,42,34);
+    // Glowing chest core
+    g.fillStyle(0x330000,1); g.fillCircle(36,40,10);
+    g.fillStyle(0xcc1100,1); g.fillCircle(36,40,7);
+    g.fillStyle(0xff4400,0.8); g.fillCircle(36,40,4);
+    g.fillStyle(0xff9966,0.9); g.fillCircle(36,39,2);
+    // Claw arms
+    g.fillStyle(0x0d0d0d,1); g.fillEllipse(6,38,16,30); g.fillEllipse(66,38,16,30);
+    g.fillStyle(0x1a0000,0.6); g.fillEllipse(6,38,10,24); g.fillEllipse(66,38,10,24);
+    // Claws
+    g.fillStyle(0x111111,1); g.fillTriangle(0,54,-4,62,6,54); g.fillTriangle(4,58,0,66,10,58);
+    g.fillStyle(0x111111,1); g.fillTriangle(72,54,76,62,66,54); g.fillTriangle(68,58,72,66,62,58);
     g.generateTexture('enemy_tank',72,72);
-    // ELITE 80×80
+
+    // ELITE → Elite Void Champion 80×80 – super Void Titan, crown spikes, more lava, glowing core
     g.clear();
-    g.fillStyle(0x882200,0.38); g.fillCircle(40,40,38);
-    g.fillStyle(0xff6600,0.18); g.fillCircle(40,40,30);
-    g.fillStyle(0x8a3000,1);   g.fillEllipse(40,50,36,42);
-    g.fillStyle(0xcc4400,1);   g.fillRect(24,32,32,24);
-    g.fillStyle(0xff6622,0.5); g.fillRect(26,34,28,20);
-    g.fillStyle(0x9a3500,1);   g.fillCircle(40,22,16);
-    g.fillStyle(0xff8800,1);   g.fillTriangle(26,14,22,3,31,14); g.fillTriangle(35,12,33,1,40,12); g.fillTriangle(45,12,40,1,47,12); g.fillTriangle(54,14,49,3,57,14);
-    g.fillStyle(0xffcc00,0.7); g.fillTriangle(31,14,28,6,35,14); g.fillTriangle(45,14,42,6,50,14);
-    g.fillStyle(0x000000,1);   g.fillCircle(34,20,5); g.fillCircle(46,20,5);
-    g.fillStyle(0xff4400,1);   g.fillCircle(34,20,3.5); g.fillCircle(46,20,3.5);
-    g.fillStyle(0xffcc00,1);   g.fillCircle(34,19,1.5); g.fillCircle(46,19,1.5);
-    g.fillStyle(0x661100,1);   g.fillEllipse(22,38,17,22); g.fillEllipse(58,38,17,22);
-    g.lineStyle(3,0xff6600,0.85); g.strokeCircle(40,40,37);
+    // Intense aura
+    g.fillStyle(0x330000,0.45); g.fillCircle(40,40,39);
+    g.fillStyle(0xff2200,0.12); g.fillCircle(40,40,33);
+    // Armor body
+    g.fillStyle(0x0d0505,1); g.fillEllipse(40,50,44,48);
+    g.fillStyle(0x1a0a0a,1); g.fillRect(22,28,36,30);
+    g.fillStyle(0x221111,0.6); g.fillRect(24,30,32,26);
+    // Head
+    g.fillStyle(0x0d0505,1); g.fillCircle(40,22,18);
+    // Crown spikes (gold-tipped)
+    g.fillStyle(0xcc0000,1); g.fillTriangle(24,16,20,2,29,16); g.fillTriangle(33,12,31,0,38,12); g.fillTriangle(47,12,42,0,49,12); g.fillTriangle(56,16,51,2,60,16);
+    g.fillStyle(0xffcc00,0.8); g.fillTriangle(25,16,22,6,29,16); g.fillTriangle(34,12,32,3,38,12); g.fillTriangle(47,12,43,3,49,12); g.fillTriangle(56,16,52,6,59,16);
+    // Red lava eyes
+    g.fillStyle(0x110000,1); g.fillCircle(34,20,6); g.fillCircle(46,20,6);
+    g.fillStyle(0xff2200,1); g.fillCircle(34,20,4.5); g.fillCircle(46,20,4.5);
+    g.fillStyle(0xff7700,1); g.fillCircle(34,19,2.5); g.fillCircle(46,19,2.5);
+    g.fillStyle(0xffffaa,0.9); g.fillCircle(34,19,1.2); g.fillCircle(46,19,1.2);
+    // Dense lava cracks
+    g.lineStyle(2,0xff2200,0.90); g.lineBetween(28,32,32,44); g.lineBetween(52,32,48,44);
+    g.lineStyle(2,0xff4400,0.80); g.lineBetween(32,44,40,50); g.lineBetween(48,44,40,50);
+    g.lineStyle(2,0xff6600,0.70); g.lineBetween(24,38,30,48); g.lineBetween(56,38,50,48);
+    g.lineStyle(1,0xff8800,0.60); g.lineBetween(36,24,34,36); g.lineBetween(44,24,46,36);
+    g.lineStyle(1,0xffaa00,0.50); g.lineBetween(30,26,28,36); g.lineBetween(50,26,52,36);
+    // Pulsing chest core (larger)
+    g.fillStyle(0x440000,1); g.fillCircle(40,44,12);
+    g.fillStyle(0xdd1100,1); g.fillCircle(40,44,9);
+    g.fillStyle(0xff5500,0.85); g.fillCircle(40,44,6);
+    g.fillStyle(0xff9900,0.9); g.fillCircle(40,43,3);
+    g.fillStyle(0xffee88,1); g.fillCircle(40,43,1.5);
+    // Massive claw arms
+    g.fillStyle(0x0d0505,1); g.fillEllipse(18,44,20,36); g.fillEllipse(62,44,20,36);
+    g.lineStyle(3,0xff4400,0.75); g.strokeCircle(40,40,38);
     g.generateTexture('enemy_elite',80,80);
 
     // Enemy bullet
@@ -346,12 +459,28 @@ class BootScene extends Phaser.Scene {
     g.lineStyle(2,0xccccdd,0.6); g.strokeCircle(22,22,14);
     g.generateTexture('hazard_saw',44,44);
 
-    // ── FLOOR TILE ────────────────────────────────────────
+    // ── FLOOR TILE – dark stone with glowing cyan cracks ──
     g.clear();
-    g.fillStyle(0x0c0c18,1);    g.fillRect(0,0,64,64);
-    g.fillStyle(0x131320,1);    g.fillRect(1,1,30,30); g.fillRect(33,33,30,30);
-    g.lineStyle(1,0x1e1e30,1);  g.strokeRect(0,0,64,64);
-    g.fillStyle(0x1a1a2e,0.6);  g.fillCircle(16,16,4); g.fillCircle(48,48,4);
+    // Base dark stone
+    g.fillStyle(0x080810,1); g.fillRect(0,0,64,64);
+    // Stone segment variation
+    g.fillStyle(0x0c0c1a,1); g.fillRect(2,2,28,28);
+    g.fillStyle(0x0a0a16,1); g.fillRect(34,2,28,28);
+    g.fillStyle(0x0e0e1e,1); g.fillRect(2,34,28,28);
+    g.fillStyle(0x0c0c1c,1); g.fillRect(34,34,28,28);
+    // Stone texture pits
+    g.fillStyle(0x060610,0.8); g.fillCircle(10,10,3); g.fillCircle(54,54,3); g.fillCircle(10,54,2.5); g.fillCircle(54,10,2.5);
+    g.fillStyle(0x121220,0.5); g.fillCircle(18,18,2); g.fillCircle(46,46,2); g.fillCircle(22,44,1.5); g.fillCircle(44,20,1.5);
+    // Cyan glow crack lines between segments
+    g.lineStyle(3,0x003344,1); g.lineBetween(0,32,64,32); g.lineBetween(32,0,32,64);
+    g.lineStyle(2,0x006688,0.9); g.lineBetween(0,32,64,32); g.lineBetween(32,0,32,64);
+    g.lineStyle(1,0x00aacc,0.85); g.lineBetween(0,32,64,32); g.lineBetween(32,0,32,64);
+    // Diagonal crack accents
+    g.lineStyle(1,0x004455,0.5); g.lineBetween(8,24,24,8); g.lineBetween(40,56,56,40);
+    g.lineStyle(1,0x006677,0.35); g.lineBetween(40,8,56,24); g.lineBetween(8,40,24,56);
+    // Cyan glow bloom at intersection
+    g.fillStyle(0x00ccee,0.20); g.fillCircle(32,32,8);
+    g.fillStyle(0x00eeff,0.12); g.fillCircle(32,32,5);
     g.generateTexture('tile_floor',64,64);
 
     // ── BACKGROUND ────────────────────────────────────────
@@ -547,18 +676,18 @@ class GameScene extends Phaser.Scene {
 
   // ── WORLD SETUP ─────────────────────────────────────────
   _setupWorld() {
-    this.add.image(WORLD_WIDTH/2, WORLD_HEIGHT/2, 'background').setDepth(-10);
+    // Dark background base
+    this.add.image(WORLD_WIDTH/2, WORLD_HEIGHT/2, 'background').setDepth(-11);
 
-    // Grid overlay
-    const grid = this.add.graphics().setDepth(-9);
-    grid.lineStyle(1,0x181828,0.45);
-    for (let x=0;x<=WORLD_WIDTH;x+=64)  grid.lineBetween(x,0,x,WORLD_HEIGHT);
-    for (let y=0;y<=WORLD_HEIGHT;y+=64) grid.lineBetween(0,y,WORLD_WIDTH,y);
+    // Tiled floor with glowing cyan cracks
+    this.add.tileSprite(WORLD_WIDTH/2, WORLD_HEIGHT/2, WORLD_WIDTH, WORLD_HEIGHT, 'tile_floor')
+      .setDepth(-10).setAlpha(0.88);
 
-    // Arena border
+    // Arena border – dark red energy wall
     const border = this.add.graphics().setDepth(-8);
-    border.lineStyle(8,0x440000,0.9);  border.strokeRect(8,8,WORLD_WIDTH-16,WORLD_HEIGHT-16);
-    border.lineStyle(2,0x880000,0.4);  border.strokeRect(22,22,WORLD_WIDTH-44,WORLD_HEIGHT-44);
+    border.lineStyle(10,0x220000,1);   border.strokeRect(4,4,WORLD_WIDTH-8,WORLD_HEIGHT-8);
+    border.lineStyle(4,0x660000,0.9);  border.strokeRect(12,12,WORLD_WIDTH-24,WORLD_HEIGHT-24);
+    border.lineStyle(1,0x990000,0.5);  border.strokeRect(20,20,WORLD_WIDTH-40,WORLD_HEIGHT-40);
 
     this.physics.world.setBounds(50,50,WORLD_WIDTH-100,WORLD_HEIGHT-100);
   }
@@ -633,16 +762,74 @@ class GameScene extends Phaser.Scene {
     this.vjoy = { active:false, pid:-1, baseX:0, baseY:0, dx:0, dy:0 };
 
     // joystick visuals (fixed overlay, created in screen coords)
-    this.jBase  = this.add.circle(0,0,68,0x334466,0.45).setDepth(300).setScrollFactor(0).setVisible(false);
-    this.jRing  = this.add.circle(0,0,68,0x000000,0).setDepth(301).setScrollFactor(0).setVisible(false);
-    this.jKnob  = this.add.circle(0,0,34,0x6699cc,0.85).setDepth(302).setScrollFactor(0).setVisible(false);
+    this.jBase = this.add.circle(0,0,68,0x334466,0.45).setDepth(300).setScrollFactor(0).setVisible(false);
+    this.jRing = this.add.circle(0,0,68,0x000000,0).setDepth(301).setScrollFactor(0).setVisible(false);
+    this.jKnob = this.add.circle(0,0,34,0x6699cc,0.85).setDepth(302).setScrollFactor(0).setVisible(false);
     this.jRing.setStrokeStyle(2,0x88aadd,0.65);
+
+    // ── Q (Ultimate) and E (Interact) touch buttons ──────
+    const W = GAME_WIDTH, H = GAME_HEIGHT;
+    const btnY = H - 90;
+    const qBtnX = W - 80;
+    const eBtnX = W - 160;
+
+    // Q button – Ultimate (gold/orange glow)
+    const qBg = this.add.circle(qBtnX, btnY, 38, 0x221100, 0.88).setDepth(305).setScrollFactor(0);
+    qBg.setStrokeStyle(3, 0xcc8800, 1);
+    const qLabel = this.add.text(qBtnX, btnY, 'Q', {
+      fontSize:'22px', fontFamily:'Georgia,serif', color:'#ffcc00',
+      stroke:'#000', strokeThickness:3
+    }).setOrigin(0.5).setDepth(306).setScrollFactor(0);
+    const qSub = this.add.text(qBtnX, btnY+22, 'ULT', {
+      fontSize:'9px', fontFamily:'Arial,sans-serif', color:'#cc8800'
+    }).setOrigin(0.5).setDepth(306).setScrollFactor(0);
+
+    // E button – Interact (cyan glow)
+    const eBg = this.add.circle(eBtnX, btnY, 32, 0x001122, 0.88).setDepth(305).setScrollFactor(0);
+    eBg.setStrokeStyle(2, 0x0088aa, 1);
+    const eLabel = this.add.text(eBtnX, btnY, 'E', {
+      fontSize:'18px', fontFamily:'Georgia,serif', color:'#00ccdd',
+      stroke:'#000', strokeThickness:2
+    }).setOrigin(0.5).setDepth(306).setScrollFactor(0);
+    const eSub = this.add.text(eBtnX, btnY+19, 'OPEN', {
+      fontSize:'8px', fontFamily:'Arial,sans-serif', color:'#008899'
+    }).setOrigin(0.5).setDepth(306).setScrollFactor(0);
+
+    // Store button hit areas for tap detection
+    this.mobileQBtn = { x:qBtnX, y:btnY, r:42 };
+    this.mobileEBtn = { x:eBtnX, y:btnY, r:36 };
+    this.mobileQBg  = qBg;
+    this.mobileEBg  = eBg;
+
+    // Helper: check if pointer hit a button
+    const hitBtn = (px, py, btn) => {
+      const dx = px - btn.x, dy = py - btn.y;
+      return dx*dx + dy*dy <= btn.r*btn.r;
+    };
 
     // multi-touch handlers
     this.input.on('pointerdown', ptr => {
-      const sx = ptr.x, sy = ptr.y;          // screen coords
-      if (sx < GAME_WIDTH * 0.48) {
-        // LEFT half → joystick
+      const sx = ptr.x, sy = ptr.y;   // screen coords
+
+      // Check Q button
+      if (hitBtn(sx, sy, this.mobileQBtn)) {
+        if (this.ultimateReady) {
+          this._activateUltimate();
+          // Flash feedback
+          this.tweens.add({ targets:qBg, alpha:0.3, duration:120, yoyo:true });
+        }
+        return;
+      }
+
+      // Check E button
+      if (hitBtn(sx, sy, this.mobileEBtn)) {
+        this._tryInteract();
+        this.tweens.add({ targets:eBg, alpha:0.3, duration:120, yoyo:true });
+        return;
+      }
+
+      if (sx < GAME_WIDTH * 0.52) {
+        // LEFT side → joystick
         if (!this.vjoy.active) {
           this.vjoy = { active:true, pid:ptr.id, baseX:sx, baseY:sy, dx:0, dy:0 };
           this.jBase.setPosition(sx,sy).setVisible(true);
@@ -650,7 +837,7 @@ class GameScene extends Phaser.Scene {
           this.jKnob.setPosition(sx,sy).setVisible(true);
         }
       } else {
-        // RIGHT half → fire & auto-aim
+        // RIGHT side (but not buttons) → fire & auto-aim
         this.player.isShooting = true;
       }
     });
@@ -677,8 +864,15 @@ class GameScene extends Phaser.Scene {
         this.vjoy = { active:false, pid:-1, baseX:0, baseY:0, dx:0, dy:0 };
         this.jBase.setVisible(false); this.jRing.setVisible(false); this.jKnob.setVisible(false);
       }
-      if (ptr.x >= GAME_WIDTH * 0.48) this.player.isShooting = false;
+      if (ptr.x >= GAME_WIDTH * 0.52) this.player.isShooting = false;
     });
+
+    // Pulse animation on Q button when ultimate is ready
+    this.time.addEvent({ delay:800, loop:true, callback:() => {
+      if (this.ultimateReady) {
+        this.tweens.add({ targets:qBg, scaleX:1.08, scaleY:1.08, duration:400, yoyo:true, ease:'Sine.easeInOut' });
+      }
+    }});
   }
 
   // ── COLLISIONS ──────────────────────────────────────────
