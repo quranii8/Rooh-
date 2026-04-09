@@ -152,133 +152,219 @@ class BootScene extends Phaser.Scene {
   _generateTextures() {
     const g = this.make.graphics({ x:0, y:0, add:false });
 
-    // ── PLAYER ──────────────────────────────────────────────
+    // ══ PLAYER  64×64  armoured mystic warrior ══
     g.clear();
-    g.fillStyle(0x0033ff, 0.30); g.fillCircle(24,24,22);   // outer glow
-    g.fillStyle(0x2255cc, 1.00); g.fillCircle(24,24,16);   // body
-    g.fillStyle(0x88aaff, 1.00); g.fillCircle(24,24, 8);   // core
-    g.fillStyle(0xffffff, 0.60); g.fillCircle(20,20, 4);   // highlight
-    g.generateTexture('player',48,48);
+    g.fillStyle(0x0022bb,0.20); g.fillCircle(32,32,31);
+    g.lineStyle(2,0x4488ff,0.55); g.strokeCircle(32,32,29);
+    g.fillStyle(0x0a1a55,1); g.fillCircle(32,32,22);
+    g.fillStyle(0x1a3a99,1); g.fillEllipse(32,36,28,30);
+    g.fillStyle(0x0d2a77,1); g.fillEllipse(14,30,13,17); g.fillEllipse(50,30,13,17);
+    g.fillStyle(0x1133aa,1); g.fillCircle(32,19,13);
+    g.fillStyle(0x0d2277,1); g.fillRect(21,10,22,11);
+    g.fillStyle(0x00ccff,1); g.fillRect(23,15,18,4);
+    g.fillStyle(0xaaeeff,0.9); g.fillRect(24,16,5,2); g.fillRect(34,16,5,2);
+    g.fillStyle(0x2255cc,1); g.fillCircle(32,37,10);
+    g.fillStyle(0x55aaff,1); g.fillCircle(32,37,6);
+    g.fillStyle(0xccddff,1); g.fillCircle(32,37,3);
+    g.lineStyle(2,0x4488ff,0.65); g.lineBetween(12,32,20,37); g.lineBetween(52,32,44,37);
+    g.generateTexture('player',64,64);
 
-    // ── BULLETS ─────────────────────────────────────────────
-    const bullets = [
-      { key:'bullet_dagger', col:0x88aaff, glow:0x4466ff, w:12, h:6  },
-      { key:'bullet_bow',    col:0x44ffaa, glow:0x22cc77, w:16, h:4  },
-      { key:'bullet_axe',    col:0xff4422, glow:0xcc2200, w:22, h:18 },
-      { key:'bullet_staff',  col:0xaa44ff, glow:0x7700cc, w:18, h:18 },
-    ];
-    bullets.forEach(({ key, col, glow, w, h }) => {
-      g.clear();
-      g.fillStyle(glow, 0.40); g.fillEllipse(w/2+3, h/2+3, w+6, h+6);
-      g.fillStyle(col,  1.00); g.fillEllipse(w/2+3, h/2+3, w,   h  );
-      g.fillStyle(0xffffff, 0.80); g.fillEllipse(w/2, h/2+1, w/3, h/3);
-      g.generateTexture(key, w+6, h+6);
-    });
-
-    // ── ENEMIES ─────────────────────────────────────────────
-    Object.entries(ENEMY_DEFS).forEach(([type, def]) => {
-      const s  = def.size;
-      const sz = s * 2 + 12;
-      g.clear();
-      // glow ring
-      g.fillStyle(def.color, 0.22); g.fillCircle(sz/2, sz/2, s+5);
-      // body
-      if (def.shape === 'rect') {
-        g.fillStyle(def.color, 1); g.fillRect(sz/2-s, sz/2-s, s*2, s*2);
-      } else {
-        g.fillStyle(def.color, 1); g.fillCircle(sz/2, sz/2, s);
-      }
-      // eyes
-      g.fillStyle(0xffffff,0.9);
-      g.fillCircle(sz/2-s/3, sz/2-s/4, s/5);
-      g.fillCircle(sz/2+s/3, sz/2-s/4, s/5);
-      g.fillStyle(0x000000,1);
-      g.fillCircle(sz/2-s/3+1, sz/2-s/4+1, s/9);
-      g.fillCircle(sz/2+s/3+1, sz/2-s/4+1, s/9);
-      // elite ring
-      if (def.isElite) { g.lineStyle(3,0xffaa00,1); g.strokeCircle(sz/2,sz/2,s+2); }
-      g.generateTexture('enemy_'+type, sz, sz);
-    });
-
-    // ── ENEMY BULLET ────────────────────────────────────────
+    // ══ BULLETS ══
+    // Dagger – blue icy shard
     g.clear();
-    g.fillStyle(0xff4444,0.4); g.fillCircle(8,8,8);
-    g.fillStyle(0xff0000,1);   g.fillCircle(8,8,5);
-    g.generateTexture('enemy_bullet',16,16);
+    g.fillStyle(0x2244ff,0.45); g.fillEllipse(10,5,24,13);
+    g.fillStyle(0x5588ff,1);    g.fillEllipse(10,5,18,7);
+    g.fillStyle(0xaaccff,1);    g.fillEllipse(8,4,10,4);
+    g.fillStyle(0xffffff,0.9);  g.fillEllipse(5,3,5,3);
+    g.generateTexture('bullet_dagger',20,10);
+    // Bow – green arrow
+    g.clear();
+    g.fillStyle(0x22bb55,0.45); g.fillEllipse(12,4,28,11);
+    g.fillStyle(0x44ff88,1);    g.fillEllipse(12,4,22,5);
+    g.fillStyle(0xccffee,1);    g.fillEllipse(8,3,8,3);
+    g.fillStyle(0xffffff,0.85); g.fillTriangle(21,1,26,4,21,7);
+    g.generateTexture('bullet_bow',28,8);
+    // Axe – fiery disc
+    g.clear();
+    g.fillStyle(0xcc2200,0.45); g.fillEllipse(13,13,30,30);
+    g.fillStyle(0xff4422,1);    g.fillEllipse(13,13,22,22);
+    g.fillStyle(0xff9966,1);    g.fillEllipse(13,13,12,12);
+    g.fillStyle(0xffddcc,0.8);  g.fillCircle(13,13,4);
+    g.lineStyle(2,0xffaa44,0.7); g.strokeCircle(13,13,10);
+    g.generateTexture('bullet_axe',26,26);
+    // Staff – magic orb
+    g.clear();
+    g.fillStyle(0x6600cc,0.40); g.fillCircle(12,12,12);
+    g.fillStyle(0xaa44ff,1);    g.fillCircle(12,12,9);
+    g.lineStyle(1,0xcc88ff,0.7); g.strokeCircle(12,12,6);
+    g.fillStyle(0xdd99ff,1);    g.fillCircle(12,12,4);
+    g.fillStyle(0xffffff,0.95); g.fillCircle(12,12,2);
+    g.generateTexture('bullet_staff',24,24);
 
-    // ── CHESTS ──────────────────────────────────────────────
+    // ══ ENEMIES – unique detailed silhouettes ══
+    // ZOMBIE 52×62
+    g.clear();
+    g.fillStyle(0x003300,0.30); g.fillCircle(26,32,26);
+    g.fillStyle(0x1a3a1a,1);   g.fillEllipse(26,40,26,32);
+    g.fillStyle(0x112211,0.80); g.fillCircle(18,40,5); g.fillCircle(32,44,4); g.fillCircle(24,48,3);
+    g.fillStyle(0x2a5a2a,1);   g.fillCircle(26,17,13);
+    g.fillStyle(0x1a3a1a,1);   g.fillRect(22,26,8,8);
+    g.fillStyle(0x1e421e,1);   g.fillRect(4,30,9,5); g.fillRect(39,30,9,5); g.fillRect(2,35,5,4); g.fillRect(45,35,5,4);
+    g.fillStyle(0x550000,1);   g.fillCircle(21,15,5); g.fillCircle(31,15,5);
+    g.fillStyle(0xff2222,1);   g.fillCircle(21,15,3); g.fillCircle(31,15,3);
+    g.fillStyle(0xff8888,0.8); g.fillCircle(21,14,1.5); g.fillCircle(31,14,1.5);
+    g.fillStyle(0x000000,1);   g.fillRect(19,22,14,4);
+    g.fillStyle(0xffffff,0.8); g.fillRect(20,22,2,3); g.fillRect(23,22,2,3); g.fillRect(26,22,2,3); g.fillRect(29,22,2,3);
+    g.generateTexture('enemy_zombie',52,62);
+    // RUNNER 44×52
+    g.clear();
+    g.fillStyle(0x886600,0.28); g.fillEllipse(22,27,44,52);
+    g.fillStyle(0x9a7000,1);   g.fillEllipse(22,34,18,28);
+    g.fillStyle(0xbb8800,1);   g.fillCircle(22,14,12);
+    g.fillStyle(0x664400,1);   g.fillTriangle(15,9,12,0,19,9); g.fillTriangle(29,9,25,9,32,0);
+    g.fillStyle(0xffcc00,1);   g.fillCircle(18,13,4); g.fillCircle(26,13,4);
+    g.fillStyle(0xff7700,1);   g.fillCircle(18,13,2); g.fillCircle(26,13,2);
+    g.lineStyle(2,0xffdd44,0.45); g.lineBetween(1,28,9,28); g.lineBetween(1,33,7,33); g.lineBetween(1,38,9,38);
+    g.fillStyle(0x553300,1);   g.fillTriangle(5,44,3,52,10,44); g.fillTriangle(34,44,39,52,42,44);
+    g.generateTexture('enemy_runner',44,52);
+    // RANGED 52×60
+    g.clear();
+    g.fillStyle(0x003366,0.28); g.fillCircle(26,30,26);
+    g.fillStyle(0x112244,1);   g.fillEllipse(26,40,24,32);
+    g.fillStyle(0x1a3366,1);   g.fillCircle(26,16,13); g.fillTriangle(20,8,26,0,32,8);
+    g.fillStyle(0x000011,0.85); g.fillEllipse(26,17,18,14);
+    g.fillStyle(0x0066ff,1);   g.fillCircle(21,15,3.5); g.fillCircle(31,15,3.5);
+    g.fillStyle(0x88ccff,1);   g.fillCircle(21,14,1.8); g.fillCircle(31,14,1.8);
+    g.fillStyle(0x8b6914,1);   g.fillRect(6,22,4,28); g.fillRect(4,22,4,5); g.fillRect(4,45,4,5);
+    g.lineStyle(2,0xccaa44,0.8); g.lineBetween(10,36,38,28);
+    g.fillStyle(0xccaa44,1);   g.fillTriangle(37,26,42,28,37,30);
+    g.generateTexture('enemy_ranged',52,60);
+    // TANK 72×72
+    g.clear();
+    g.fillStyle(0x111111,0.50); g.fillEllipse(36,68,58,12);
+    g.fillStyle(0x2a2a3a,1);   g.fillRect(8,22,56,44);
+    g.fillStyle(0x3e3e50,1);   g.fillRect(10,24,26,20); g.fillRect(36,24,26,20); g.fillRect(10,46,26,18); g.fillRect(36,46,26,18);
+    g.fillStyle(0x7a7a8a,1);   [13,23,35,47,59].forEach(rx=>[27,35,49,57].forEach(ry=>g.fillCircle(rx,ry,2)));
+    g.fillStyle(0x1e1e2e,1);   g.fillEllipse(36,22,38,24);
+    g.fillStyle(0x001100,1);   g.fillRect(17,15,38,9);
+    g.fillStyle(0x00ff44,1);   g.fillRect(19,16,15,7); g.fillRect(38,16,15,7);
+    g.fillStyle(0x88ff99,0.6); g.fillRect(21,17,9,4); g.fillRect(40,17,9,4);
+    g.fillStyle(0x1e1e2e,1);   g.fillTriangle(8,22,0,12,8,30); g.fillTriangle(64,22,72,12,64,30);
+    g.generateTexture('enemy_tank',72,72);
+    // ELITE 80×80
+    g.clear();
+    g.fillStyle(0x882200,0.38); g.fillCircle(40,40,38);
+    g.fillStyle(0xff6600,0.18); g.fillCircle(40,40,30);
+    g.fillStyle(0x8a3000,1);   g.fillEllipse(40,50,36,42);
+    g.fillStyle(0xcc4400,1);   g.fillRect(24,32,32,24);
+    g.fillStyle(0xff6622,0.5); g.fillRect(26,34,28,20);
+    g.fillStyle(0x9a3500,1);   g.fillCircle(40,22,16);
+    g.fillStyle(0xff8800,1);   g.fillTriangle(26,14,22,3,31,14); g.fillTriangle(35,12,33,1,40,12); g.fillTriangle(45,12,40,1,47,12); g.fillTriangle(54,14,49,3,57,14);
+    g.fillStyle(0xffcc00,0.7); g.fillTriangle(31,14,28,6,35,14); g.fillTriangle(45,14,42,6,50,14);
+    g.fillStyle(0x000000,1);   g.fillCircle(34,20,5); g.fillCircle(46,20,5);
+    g.fillStyle(0xff4400,1);   g.fillCircle(34,20,3.5); g.fillCircle(46,20,3.5);
+    g.fillStyle(0xffcc00,1);   g.fillCircle(34,19,1.5); g.fillCircle(46,19,1.5);
+    g.fillStyle(0x661100,1);   g.fillEllipse(22,38,17,22); g.fillEllipse(58,38,17,22);
+    g.lineStyle(3,0xff6600,0.85); g.strokeCircle(40,40,37);
+    g.generateTexture('enemy_elite',80,80);
+
+    // Enemy bullet
+    g.clear();
+    g.fillStyle(0xcc0000,0.40); g.fillCircle(9,9,9);
+    g.fillStyle(0xff2222,1);    g.fillCircle(9,9,6);
+    g.fillStyle(0xff9999,0.8);  g.fillCircle(8,8,3);
+    g.generateTexture('enemy_bullet',18,18);
+
+    // ══ CHESTS – detailed wooden box with rarity jewel ══
     ['common','rare','epic','legendary'].forEach(r => {
       const col = RARITY_COLORS[r];
       g.clear();
-      g.fillStyle(0x000000,0.35); g.fillRect(3,36,44,8);       // shadow
-      g.fillStyle(0x5a3a1a,1);    g.fillRect(2,12,44,26);      // body
-      g.fillStyle(0x7a5a2a,1);    g.fillRect(0, 6,48,14);      // lid
-      g.lineStyle(3,col,1);       g.strokeRect(0,6,48,32);     // rarity border
-      g.fillStyle(col,1);         g.fillCircle(24,24,7);       // lock
-      g.fillStyle(0xffffff,0.6);  g.fillCircle(24,24,3);
-      if (r==='epic'||r==='legendary') { g.fillStyle(col,0.13); g.fillRect(-4,2,56,40); }
-      g.generateTexture('chest_'+r,48,44);
+      g.fillStyle(0x000000,0.35); g.fillEllipse(24,46,46,8);
+      g.fillStyle(0x3d2208,1);    g.fillRoundedRect(2,16,44,26,3);
+      g.fillStyle(0x4a2a0a,0.7);  g.fillRect(4,16,8,26); g.fillRect(18,16,8,26); g.fillRect(32,16,8,26);
+      g.fillStyle(0x5c3410,1);    g.fillRoundedRect(0,8,48,14,{tl:5,tr:5,bl:0,br:0});
+      g.fillStyle(0x6e4018,0.6);  g.fillRect(0,8,48,5);
+      g.fillStyle(0x777788,1);    g.fillRect(0,26,48,4); g.fillRect(0,10,48,3);
+      g.fillStyle(0x555566,1);    g.fillRect(4,23,7,7); g.fillRect(37,23,7,7);
+      g.fillStyle(0x888899,1);    g.fillCircle(7,26,3); g.fillCircle(40,26,3);
+      g.lineStyle(3,col,1);       g.strokeRoundedRect(0,8,48,34,3);
+      g.fillStyle(0x555566,1);    g.fillRoundedRect(19,22,10,10,2);
+      g.fillStyle(col,1);         g.fillCircle(24,24,5);
+      g.fillStyle(0xffffff,0.5);  g.fillCircle(23,23,2);
+      if (r==='epic'||r==='legendary'){
+        [4,44].forEach(cx=>[12,38].forEach(cy=>{
+          g.fillStyle(col,0.9); g.fillCircle(cx,cy,4);
+          g.fillStyle(0xffffff,0.6); g.fillCircle(cx-1,cy-1,1.5);
+        }));
+      }
+      g.generateTexture('chest_'+r,48,48);
     });
 
-    // ── XP ORB ──────────────────────────────────────────────
+    // ── XP ORB – faceted cyan crystal ─────────────────────
     g.clear();
-    g.fillStyle(0x00ffaa,0.30); g.fillCircle(8,8,8);
-    g.fillStyle(0x00ffaa,1.00); g.fillCircle(8,8,5);
-    g.fillStyle(0xffffff,0.80); g.fillCircle(6,6,2);
-    g.generateTexture('xp_orb',16,16);
+    g.fillStyle(0x00ffaa,0.28); g.fillCircle(9,9,9);
+    g.fillStyle(0x00cc88,1);    g.fillCircle(9,9,6);
+    g.fillStyle(0x00ffbb,1);    g.fillTriangle(9,3,13,9,9,12); g.fillTriangle(9,3,5,9,9,12);
+    g.fillStyle(0xffffff,0.90); g.fillCircle(7,7,2);
+    g.generateTexture('xp_orb',18,18);
 
-    // ── PARTICLES ───────────────────────────────────────────
-    g.clear(); g.fillStyle(0xcc0000,1); g.fillCircle(4,4,4); g.generateTexture('particle_blood',8,8);
-    g.clear(); g.fillStyle(0xffff00,1); g.fillCircle(3,3,3); g.generateTexture('particle_spark',6,6);
-    g.clear();
-    g.fillStyle(0xaa44ff,0.8); g.fillCircle(4,4,4);
-    g.fillStyle(0xffffff,1);   g.fillCircle(4,4,2);
-    g.generateTexture('particle_magic',8,8);
-    g.clear(); g.fillStyle(0x00ffaa,1); g.fillCircle(4,4,4); g.generateTexture('particle_xp',8,8);
+    // ── PARTICLES ─────────────────────────────────────────
+    g.clear(); g.fillStyle(0xcc0000,1);  g.fillCircle(4,4,4); g.generateTexture('particle_blood',8,8);
+    g.clear(); g.fillStyle(0xffee00,1);  g.fillCircle(3,3,3); g.generateTexture('particle_spark',6,6);
+    g.clear(); g.fillStyle(0xaa44ff,0.85); g.fillCircle(4,4,4); g.fillStyle(0xffffff,1); g.fillCircle(4,4,2); g.generateTexture('particle_magic',8,8);
+    g.clear(); g.fillStyle(0x00ffaa,1);  g.fillCircle(4,4,4); g.generateTexture('particle_xp',8,8);
 
-    // ── EXPLOSION ───────────────────────────────────────────
+    // ── EXPLOSION – layered blast rings ───────────────────
     g.clear();
-    g.fillStyle(0xff6600,0.6); g.fillCircle(32,32,32);
-    g.fillStyle(0xffcc00,0.8); g.fillCircle(32,32,20);
-    g.fillStyle(0xffffff,0.9); g.fillCircle(32,32,10);
-    g.generateTexture('explosion',64,64);
+    g.fillStyle(0x331100,0.50); g.fillCircle(40,40,40);
+    g.fillStyle(0xff4400,0.75); g.fillCircle(40,40,30);
+    g.fillStyle(0xff9900,0.85); g.fillCircle(40,40,20);
+    g.fillStyle(0xffee44,0.90); g.fillCircle(40,40,12);
+    g.fillStyle(0xffffff,0.95); g.fillCircle(40,40,5);
+    g.generateTexture('explosion',80,80);
 
-    // ── HAZARDS ─────────────────────────────────────────────
+    // ── HAZARDS ───────────────────────────────────────────
+    // Lava pool
     g.clear();
-    g.fillStyle(0xff4400,0.85); g.fillEllipse(48,30,96,60);
-    g.fillStyle(0xff8800,0.60); g.fillEllipse(48,30,68,40);
-    g.fillStyle(0xffcc00,0.35); g.fillEllipse(48,30,38,22);
-    g.generateTexture('hazard_lava',96,60);
-
+    g.fillStyle(0x330000,0.60); g.fillEllipse(50,32,104,66);
+    g.fillStyle(0xff3300,0.88); g.fillEllipse(50,32,96,60);
+    g.fillStyle(0xff6600,0.70); g.fillEllipse(50,32,72,44);
+    g.fillStyle(0xff9900,0.50); g.fillEllipse(50,32,48,30);
+    g.fillStyle(0xffcc00,0.30); g.fillEllipse(50,32,26,16);
+    g.fillStyle(0xff4400,0.8);  g.fillCircle(30,24,5); g.fillCircle(60,36,4); g.fillCircle(44,40,3);
+    g.generateTexture('hazard_lava',100,64);
+    // Saw blade – metallic disc
     g.clear();
-    g.fillStyle(0x999999,1); g.fillCircle(20,20,18);
-    for (let i=0;i<8;i++){
-      const a=(i/8)*Math.PI*2;
-      g.fillTriangle(
-        20+Math.cos(a)*18, 20+Math.sin(a)*18,
-        20+Math.cos(a+0.30)*14, 20+Math.sin(a+0.30)*14,
-        20+Math.cos(a+0.15)*27, 20+Math.sin(a+0.15)*27
-      );
+    g.fillStyle(0x555566,1); g.fillCircle(22,22,20);
+    g.fillStyle(0x888899,1); g.fillCircle(22,22,16);
+    for (let i=0;i<10;i++){
+      const a=(i/10)*Math.PI*2;
+      g.fillTriangle(22+Math.cos(a)*16,22+Math.sin(a)*16,22+Math.cos(a+0.25)*13,22+Math.sin(a+0.25)*13,22+Math.cos(a+0.125)*26,22+Math.sin(a+0.125)*26);
     }
-    g.fillStyle(0xbbbbbb,1); g.fillCircle(20,20,8);
-    g.fillStyle(0x333333,1); g.fillCircle(20,20,4);
-    g.generateTexture('hazard_saw',40,40);
+    g.fillStyle(0xaabbcc,1); g.fillCircle(22,22,9);
+    g.fillStyle(0x222233,1); g.fillCircle(22,22,5);
+    g.lineStyle(2,0xccccdd,0.6); g.strokeCircle(22,22,14);
+    g.generateTexture('hazard_saw',44,44);
 
-    // ── FLOOR TILE ──────────────────────────────────────────
+    // ── FLOOR TILE ────────────────────────────────────────
     g.clear();
-    g.fillStyle(0x0e0e1a,1); g.fillRect(0,0,64,64);
-    g.lineStyle(1,0x1a1a28,1); g.strokeRect(0,0,64,64);
-    g.fillStyle(0x141420,0.5);
-    g.fillRect(8,8,20,20); g.fillRect(36,36,20,20);
+    g.fillStyle(0x0c0c18,1);    g.fillRect(0,0,64,64);
+    g.fillStyle(0x131320,1);    g.fillRect(1,1,30,30); g.fillRect(33,33,30,30);
+    g.lineStyle(1,0x1e1e30,1);  g.strokeRect(0,0,64,64);
+    g.fillStyle(0x1a1a2e,0.6);  g.fillCircle(16,16,4); g.fillCircle(48,48,4);
     g.generateTexture('tile_floor',64,64);
 
-    // ── BACKGROUND ──────────────────────────────────────────
+    // ── BACKGROUND ────────────────────────────────────────
     const bg = this.make.graphics({ x:0, y:0, add:false });
-    bg.fillGradientStyle(0x050510,0x050510,0x0a0a1a,0x0a0a1a,1);
+    bg.fillGradientStyle(0x04040e,0x04040e,0x080818,0x080818,1);
     bg.fillRect(0,0,WORLD_WIDTH,WORLD_HEIGHT);
-    for (let i=0;i<180;i++){
-      bg.fillStyle(0x1a1a32, 0.15+Math.random()*0.25);
-      bg.fillCircle(Math.random()*WORLD_WIDTH, Math.random()*WORLD_HEIGHT, 4+Math.random()*28);
+    for (let i=0;i<220;i++){
+      bg.fillStyle(0x181832,0.12+Math.random()*0.20);
+      bg.fillCircle(Math.random()*WORLD_WIDTH,Math.random()*WORLD_HEIGHT,6+Math.random()*36);
+    }
+    for (let i=0;i<30;i++){
+      bg.lineStyle(1,0x2a2a55,0.22);
+      bg.strokeCircle(Math.random()*WORLD_WIDTH,Math.random()*WORLD_HEIGHT,40+Math.random()*60);
     }
     bg.generateTexture('background',WORLD_WIDTH,WORLD_HEIGHT);
     bg.destroy();
@@ -529,9 +615,70 @@ class GameScene extends Phaser.Scene {
     });
 
     this.mouseWorld = { x: WORLD_WIDTH/2+120, y: WORLD_HEIGHT/2 };
-    this.input.on('pointermove', ptr => { this.mouseWorld.x = ptr.worldX; this.mouseWorld.y = ptr.worldY; });
-    this.input.on('pointerdown', ptr => { if(ptr.leftButtonDown()) this.player.isShooting = true;  });
-    this.input.on('pointerup',   ()  => { this.player.isShooting = false; });
+
+    // ── DESKTOP mouse ────────────────────────────────────
+    this.input.on('pointermove', ptr => {
+      if (!this.isMobile) { this.mouseWorld.x = ptr.worldX; this.mouseWorld.y = ptr.worldY; }
+    });
+    this.input.on('pointerdown', ptr => { if(ptr.leftButtonDown() && !this.isMobile) this.player.isShooting = true; });
+    this.input.on('pointerup',   ()  => { if(!this.isMobile) this.player.isShooting = false; });
+
+    // ── MOBILE touch joystick ────────────────────────────
+    this.isMobile = this.sys.game.device.input.touch;
+    if (this.isMobile) this._setupMobileControls();
+  }
+
+  _setupMobileControls() {
+    // virtual joystick state
+    this.vjoy = { active:false, pid:-1, baseX:0, baseY:0, dx:0, dy:0 };
+
+    // joystick visuals (fixed overlay, created in screen coords)
+    this.jBase  = this.add.circle(0,0,68,0x334466,0.45).setDepth(300).setScrollFactor(0).setVisible(false);
+    this.jRing  = this.add.circle(0,0,68,0x000000,0).setDepth(301).setScrollFactor(0).setVisible(false);
+    this.jKnob  = this.add.circle(0,0,34,0x6699cc,0.85).setDepth(302).setScrollFactor(0).setVisible(false);
+    this.jRing.setStrokeStyle(2,0x88aadd,0.65);
+
+    // multi-touch handlers
+    this.input.on('pointerdown', ptr => {
+      const sx = ptr.x, sy = ptr.y;          // screen coords
+      if (sx < GAME_WIDTH * 0.48) {
+        // LEFT half → joystick
+        if (!this.vjoy.active) {
+          this.vjoy = { active:true, pid:ptr.id, baseX:sx, baseY:sy, dx:0, dy:0 };
+          this.jBase.setPosition(sx,sy).setVisible(true);
+          this.jRing.setPosition(sx,sy).setVisible(true);
+          this.jKnob.setPosition(sx,sy).setVisible(true);
+        }
+      } else {
+        // RIGHT half → fire & auto-aim
+        this.player.isShooting = true;
+      }
+    });
+
+    this.input.on('pointermove', ptr => {
+      if (this.vjoy.active && ptr.id === this.vjoy.pid) {
+        const dx = ptr.x - this.vjoy.baseX;
+        const dy = ptr.y - this.vjoy.baseY;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        const max  = 58;
+        const clamped = Math.min(dist, max);
+        const ang  = Math.atan2(dy, dx);
+        this.vjoy.dx = (clamped/max)*Math.cos(ang);
+        this.vjoy.dy = (clamped/max)*Math.sin(ang);
+        this.jKnob.setPosition(
+          this.vjoy.baseX + Math.cos(ang)*clamped,
+          this.vjoy.baseY + Math.sin(ang)*clamped
+        );
+      }
+    });
+
+    this.input.on('pointerup', ptr => {
+      if (ptr.id === this.vjoy.pid) {
+        this.vjoy = { active:false, pid:-1, baseX:0, baseY:0, dx:0, dy:0 };
+        this.jBase.setVisible(false); this.jRing.setVisible(false); this.jKnob.setVisible(false);
+      }
+      if (ptr.x >= GAME_WIDTH * 0.48) this.player.isShooting = false;
+    });
   }
 
   // ── COLLISIONS ──────────────────────────────────────────
@@ -610,11 +757,20 @@ class GameScene extends Phaser.Scene {
     const p = this.player;
     const spd = p.stats.speed;
     let vx=0, vy=0;
-    if (this.keys.left.isDown  || this.keys.leftA.isDown)  vx -= spd;
-    if (this.keys.right.isDown || this.keys.rightA.isDown) vx += spd;
-    if (this.keys.up.isDown    || this.keys.upA.isDown)    vy -= spd;
-    if (this.keys.down.isDown  || this.keys.downA.isDown)  vy += spd;
-    if (vx && vy) { vx *= 0.707; vy *= 0.707; }
+
+    if (this.isMobile && this.vjoy && this.vjoy.active) {
+      // joystick input
+      vx = this.vjoy.dx * spd;
+      vy = this.vjoy.dy * spd;
+    } else {
+      // keyboard input
+      if (this.keys.left.isDown  || this.keys.leftA.isDown)  vx -= spd;
+      if (this.keys.right.isDown || this.keys.rightA.isDown) vx += spd;
+      if (this.keys.up.isDown    || this.keys.upA.isDown)    vy -= spd;
+      if (this.keys.down.isDown  || this.keys.downA.isDown)  vy += spd;
+      if (vx && vy) { vx *= 0.707; vy *= 0.707; }
+    }
+
     p.sprite.setVelocity(vx, vy);
     const ang = Phaser.Math.Angle.Between(p.sprite.x,p.sprite.y,this.mouseWorld.x,this.mouseWorld.y);
     p.sprite.setRotation(ang + Math.PI/2);
@@ -628,6 +784,12 @@ class GameScene extends Phaser.Scene {
     const rate = p.weapon.fireRate * p.stats.fireRateMulti;
     if (time - this.lastFireTime < rate) return;
     this.lastFireTime = time;
+
+    // Mobile: auto-aim at nearest enemy
+    if (this.isMobile) {
+      const nearest = this._getNearestEnemy(p.sprite.x, p.sprite.y, 700);
+      if (nearest) { this.mouseWorld.x = nearest.x; this.mouseWorld.y = nearest.y; }
+    }
 
     const ang = Phaser.Math.Angle.Between(p.sprite.x,p.sprite.y,this.mouseWorld.x,this.mouseWorld.y);
     this._fireBullet(p.sprite.x, p.sprite.y, ang);
