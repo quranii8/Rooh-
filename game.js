@@ -504,7 +504,7 @@ class BootScene extends Phaser.Scene {
 
 
 // ═══════════════════════════════════════════════════════════
-// MAIN MENU SCENE
+// MAIN MENU SCENE  – Epic Dark Fantasy Menu
 // ═══════════════════════════════════════════════════════════
 class MainMenuScene extends Phaser.Scene {
   constructor() { super({ key:'MainMenuScene' }); }
@@ -512,89 +512,170 @@ class MainMenuScene extends Phaser.Scene {
   create() {
     const W = GAME_WIDTH, H = GAME_HEIGHT;
 
-    // Dark background
-    this.add.rectangle(W/2,H/2,W,H,0x05050f);
+    // ── Stone floor background ─────────────────────────────
+    this.add.tileSprite(W/2,H/2,W,H,'tile_floor').setAlpha(0.95);
+    // Dark overlay for depth
+    this.add.rectangle(W/2,H/2,W,H,0x000000,0.60);
+    // Vignette effect: dark edges
+    const vig = this.add.graphics();
+    vig.fillGradientStyle(0x000000,0x000000,0x00000000,0x00000000,0.75,0.75,0,0);
+    vig.fillRect(0,0,W,H*0.35);
+    const vig2 = this.add.graphics();
+    vig2.fillGradientStyle(0x00000000,0x00000000,0x000000,0x000000,0,0,0.75,0.75);
+    vig2.fillRect(0,H*0.65,W,H*0.35);
 
-    // Animated background particles
-    for (let i=0;i<35;i++) this._spawnBgParticle(W,H);
+    // ── Animated energy particles (floating upward) ────────
+    for (let i=0;i<40;i++) this._spawnBgParticle(W,H);
 
-    // Title
-    const title = this.add.text(W/2, H*0.18, 'DARK REALM', {
-      fontSize:'72px', fontFamily:'Georgia,serif', color:'#cc8800',
-      stroke:'#000', strokeThickness:6,
-      shadow:{ offsetX:0, offsetY:0, color:'#ff8800', blur:30, fill:true }
+    // ── Horizontal decorative lines ────────────────────────
+    const deco = this.add.graphics();
+    deco.lineStyle(1,0x003355,0.8); deco.lineBetween(0,H*0.78,W,H*0.78);
+    deco.lineStyle(1,0x003355,0.5); deco.lineBetween(0,H*0.80,W,H*0.80);
+
+    // ── Player character displayed on LEFT ─────────────────
+    const playerX = W*0.20, playerY = H*0.54;
+    // Blue glow ring behind player
+    const glowRing = this.add.circle(playerX, playerY, 80, 0x0033aa, 0.25);
+    this.add.circle(playerX, playerY, 65, 0x0055cc, 0.18);
+    this.tweens.add({ targets:glowRing, scaleX:1.12, scaleY:1.12, alpha:0.12, duration:1600, yoyo:true, repeat:-1, ease:'Sine.easeInOut' });
+    // Player sprite (large)
+    const pSprite = this.add.image(playerX, playerY, 'player').setScale(2.8);
+    this.tweens.add({ targets:pSprite, y:playerY-8, duration:1800, yoyo:true, repeat:-1, ease:'Sine.easeInOut' });
+    // Energy orbit particles
+    for (let i=0;i<6;i++) {
+      const ang = (i/6)*Math.PI*2;
+      const orb = this.add.circle(playerX+Math.cos(ang)*70, playerY+Math.sin(ang)*50, 3, 0x0088ff, 0.8);
+      this.tweens.add({ targets:orb, angle:360, duration:3000+i*400, repeat:-1,
+        onUpdate:()=>{
+          const a = (i/6)*Math.PI*2 + this.time.now*0.001*(1+i*0.1);
+          orb.setPosition(playerX+Math.cos(a)*70, playerY+Math.sin(a)*50);
+        }
+      });
+    }
+
+    // ── TITLE ──────────────────────────────────────────────
+    const titleX = W*0.6;
+    // Glow backing
+    const titleGlow = this.add.text(titleX, H*0.17, 'DARK REALM', {
+      fontSize:'74px', fontFamily:'Georgia,serif', color:'#ff8800',
+      stroke:'#ff4400', strokeThickness:2
+    }).setOrigin(0.5).setAlpha(0.22);
+    this.tweens.add({ targets:titleGlow, alpha:0.35, duration:1100, yoyo:true, repeat:-1 });
+
+    const title = this.add.text(titleX, H*0.17, 'DARK REALM', {
+      fontSize:'74px', fontFamily:'Georgia,serif', color:'#ffcc44',
+      stroke:'#220800', strokeThickness:8,
+      shadow:{ offsetX:0, offsetY:2, color:'#ff6600', blur:18, fill:true }
     }).setOrigin(0.5);
-    this.tweens.add({ targets:title, scaleX:1.03, scaleY:1.03, duration:1400, yoyo:true, repeat:-1, ease:'Sine.easeInOut' });
+    this.tweens.add({ targets:title, scaleX:1.025, scaleY:1.025, duration:1800, yoyo:true, repeat:-1, ease:'Sine.easeInOut' });
 
-    this.add.text(W/2, H*0.30, 'S  U  R  V  I  V  A  L', {
-      fontSize:'22px', fontFamily:'Georgia,serif', color:'#666666', letterSpacing:10
+    this.add.text(titleX, H*0.295, 'S  U  R  V  I  V  A  L', {
+      fontSize:'20px', fontFamily:'Georgia,serif', color:'#7799bb',
+      stroke:'#000', strokeThickness:2
     }).setOrigin(0.5);
 
-    // Separator line
-    const lg = this.add.graphics();
-    lg.lineStyle(1,0x664400,0.5);
-    lg.lineBetween(W*0.28,H*0.38,W*0.72,H*0.38);
+    // Decorative title separator
+    const sep = this.add.graphics();
+    sep.lineStyle(2,0xcc8800,0.7); sep.lineBetween(titleX-160,H*0.345,titleX+160,H*0.345);
+    sep.lineStyle(1,0xcc8800,0.3); sep.lineBetween(titleX-200,H*0.355,titleX+200,H*0.355);
 
-    // Stage info from save
+    // ── Save data ──────────────────────────────────────────
     const save   = this._loadSave();
     const stages = ['The Cursed Forest','The Sunken Ruins','The Demon Citadel','The Void Realm','The Abyss'];
     const stageN = Math.min(save.unlockedStage||1, stages.length);
     const stageName = stages[stageN-1];
 
-    this.add.text(W/2,H*0.43,`STAGE ${stageN}`, {
-      fontSize:'20px', fontFamily:'Georgia,serif', color:'#888888'
-    }).setOrigin(0.5);
-    this.add.text(W/2,H*0.50,stageName, {
-      fontSize:'16px', fontFamily:'Georgia,serif', color:'#555555'
+    // ── Glass menu panel ───────────────────────────────────
+    const panelX = titleX, panelY = H*0.57;
+    // Panel background (glass effect)
+    const panelBg = this.add.rectangle(panelX, panelY, 310, 200, 0x050d18, 0.82);
+    panelBg.setStrokeStyle(1, 0x224466, 1);
+    // Panel corner accents
+    const corners = this.add.graphics();
+    corners.lineStyle(2,0x3399cc,0.9);
+    [[panelX-155,panelY-100],[panelX+155,panelY-100],[panelX-155,panelY+100],[panelX+155,panelY+100]].forEach(([cx,cy])=>{
+      corners.strokeRect(cx-8,cy-8,16,16);
+    });
+
+    // ── START GAME button (prominent) ──────────────────────
+    const startBtnBg = this.add.rectangle(panelX, panelY-54, 240, 40, 0x0d1a00, 0.9);
+    startBtnBg.setStrokeStyle(2,0xcc8800,1);
+    const startBtn = this.add.text(panelX, panelY-54, '[ START GAME ]', {
+      fontSize:'22px', fontFamily:'Georgia,serif', color:'#ffcc00',
+      stroke:'#000', strokeThickness:3
+    }).setOrigin(0.5).setInteractive({ useHandCursor:true });
+
+    startBtn.on('pointerover',()=>{ startBtnBg.setFillStyle(0x1a2a00,0.95); startBtn.setColor('#ffffff'); });
+    startBtn.on('pointerout', ()=>{ startBtnBg.setFillStyle(0x0d1a00,0.90); startBtn.setColor('#ffcc00'); });
+    startBtn.on('pointerdown',()=>{
+      this.cameras.main.fadeOut(380,0,0,0);
+      this.time.delayedCall(400,()=> this.scene.start('GameScene',{ stage:stageN }));
+    });
+    this.tweens.add({ targets:[startBtn,startBtnBg], alpha:0.70, duration:900, yoyo:true, repeat:-1 });
+
+    // ── Menu items ─────────────────────────────────────────
+    const menuItems = [
+      { label:'START',      action:()=>{ this.cameras.main.fadeOut(380,0,0,0); this.time.delayedCall(400,()=>this.scene.start('GameScene',{ stage:stageN })); } },
+      { label:'STAGES',     action:()=>{ /* future */ } },
+      { label:'COLLECTION', action:()=>{ /* future */ } },
+      { label:'OPTIONS',    action:()=>{ /* future */ } },
+    ];
+    menuItems.forEach((item,i)=>{
+      const my = panelY - 6 + i*34;
+      const mt = this.add.text(panelX, my, item.label, {
+        fontSize:'15px', fontFamily:'Georgia,serif', color:'#889aaa',
+        stroke:'#000', strokeThickness:1
+      }).setOrigin(0.5).setInteractive({ useHandCursor:true });
+      mt.on('pointerover',()=>mt.setColor('#ffffff').setFontSize('16px'));
+      mt.on('pointerout', ()=>mt.setColor('#889aaa').setFontSize('15px'));
+      mt.on('pointerdown',()=>item.action());
+    });
+
+    // ── Stage info bar ─────────────────────────────────────
+    const barY = H*0.845;
+    this.add.rectangle(W/2, barY, W*0.70, 38, 0x030810, 0.90).setStrokeStyle(1,0x006688,0.9);
+    this.add.text(W/2, barY, `Stage ${stageN}: ${stageName}`, {
+      fontSize:'15px', fontFamily:'Georgia,serif', color:'#44aacc',
+      stroke:'#000', strokeThickness:2
     }).setOrigin(0.5);
 
     if (save.lastRun) {
-      this.add.text(W/2, H*0.57,
-        `Last Run: Lv ${save.lastRun.level}  |  Score ${save.lastRun.score}  |  ${save.lastRun.survived}`,
-        { fontSize:'13px', fontFamily:'Georgia,serif', color:'#444444' }
+      this.add.text(W/2, barY+26,
+        `Last Run: Lv ${save.lastRun.level}  ·  Score ${save.lastRun.score}  ·  ${save.lastRun.survived}`,
+        { fontSize:'11px', fontFamily:'Georgia,serif', color:'#446677' }
       ).setOrigin(0.5);
     }
 
-    // START button
-    const btn = this.add.text(W/2,H*0.68,'[ START GAME ]', {
-      fontSize:'34px', fontFamily:'Georgia,serif', color:'#ffaa00',
-      stroke:'#000', strokeThickness:4
-    }).setOrigin(0.5).setInteractive({ useHandCursor:true });
-
-    btn.on('pointerover',()=>btn.setColor('#ffffff'));
-    btn.on('pointerout', ()=>btn.setColor('#ffaa00'));
-    btn.on('pointerdown',()=>{
-      this.cameras.main.fadeOut(400,0,0,0);
-      this.time.delayedCall(420,()=> this.scene.start('GameScene',{ stage:stageN }));
-    });
-    this.tweens.add({ targets:btn, alpha:0.65, duration:750, yoyo:true, repeat:-1 });
-
-    // Controls hint
-    this.add.text(W/2,H*0.82,'WASD: Move   |   Mouse: Aim   |   LMB: Shoot   |   Q: Ultimate   |   Shift: Dash   |   E: Open Chest', {
-      fontSize:'12px', fontFamily:'Georgia,serif', color:'#3a3a3a'
+    // ── Controls hint ──────────────────────────────────────
+    const isMobile = ('ontouchstart' in window);
+    const hint = isMobile
+      ? 'Left: Joystick  ·  Auto-fire  ·  Q: Ultimate  ·  E: Open Chest'
+      : 'WASD: Move  ·  Mouse: Aim  ·  LMB: Shoot  ·  Q: Ultimate  ·  Shift: Dash  ·  E: Open Chest';
+    this.add.text(W/2, H*0.935, hint, {
+      fontSize:'11px', fontFamily:'Georgia,serif', color:'#2d4455'
     }).setOrigin(0.5);
 
-    this.add.text(W/2,H*0.93,'Dark Realm: Survival  v1.0', {
-      fontSize:'11px', fontFamily:'Georgia,serif', color:'#2a2a2a'
-    }).setOrigin(0.5);
-
-    this.cameras.main.fadeIn(700,0,0,0);
+    this.cameras.main.fadeIn(600,0,0,0);
   }
 
-  _spawnBgParticle(W,H) {
+  _spawnBgParticle(W, H) {
     const x = Phaser.Math.Between(0,W);
     const y = Phaser.Math.Between(0,H);
-    const s = Phaser.Math.Between(1,4);
-    const colors = [0x4455ff,0xaa44ff,0xff4400,0x44ffaa,0xffaa00];
-    const p = this.add.circle(x,y,s,Phaser.Utils.Array.GetRandom(colors),0.6);
+    const r = Phaser.Math.Between(1,3);
+    const colors = [0x0066ff,0x4400cc,0x0088aa,0x00ccff,0x6600ff];
+    const c = Phaser.Utils.Array.GetRandom(colors);
+    const p = this.add.circle(x, H+10, r, c, 0.65);
+    const dur = Phaser.Math.Between(4000,10000);
+    const rise = Phaser.Math.Between(H+20, H+600);
     this.tweens.add({
-      targets:p, y:y-Phaser.Math.Between(100,350), alpha:0,
-      duration:Phaser.Math.Between(3000,9000),
-      onComplete:()=>{
-        p.setPosition(Phaser.Math.Between(0,W), H+10); p.setAlpha(0.6);
-        this.tweens.add({ targets:p, y:'-='+Phaser.Math.Between(100,350), alpha:0,
-          duration:Phaser.Math.Between(3000,9000), repeat:-1 });
-      }
+      targets:p,
+      y: -rise/4,
+      x: x + Phaser.Math.Between(-80,80),
+      alpha: 0,
+      duration: dur,
+      delay: Phaser.Math.Between(0,5000),
+      repeat: -1,
+      onRepeat: ()=>{ p.setPosition(Phaser.Math.Between(0,W), H+10); p.setAlpha(0.65); }
     });
   }
 
@@ -761,118 +842,157 @@ class GameScene extends Phaser.Scene {
     // virtual joystick state
     this.vjoy = { active:false, pid:-1, baseX:0, baseY:0, dx:0, dy:0 };
 
-    // joystick visuals (fixed overlay, created in screen coords)
-    this.jBase = this.add.circle(0,0,68,0x334466,0.45).setDepth(300).setScrollFactor(0).setVisible(false);
-    this.jRing = this.add.circle(0,0,68,0x000000,0).setDepth(301).setScrollFactor(0).setVisible(false);
-    this.jKnob = this.add.circle(0,0,34,0x6699cc,0.85).setDepth(302).setScrollFactor(0).setVisible(false);
-    this.jRing.setStrokeStyle(2,0x88aadd,0.65);
+    // ── Joystick visuals – octagonal decorative ring ──────
+    const joyG = this.add.graphics().setDepth(300).setScrollFactor(0).setVisible(false);
+    this.joyGraphics = joyG;
+    this.jBase = this.add.circle(0,0,1,0x000000,0).setDepth(298).setScrollFactor(0); // invisible anchor
+    this.jRing = this.add.circle(0,0,1,0x000000,0).setDepth(299).setScrollFactor(0);
+    this.jKnob = this.add.circle(0,0,28,0x2266cc,0.80).setDepth(302).setScrollFactor(0).setVisible(false);
+    this.jKnob.setStrokeStyle(2,0x55aaff,0.9);
 
-    // ── Q (Ultimate) and E (Interact) touch buttons ──────
+    // ── Auto-fire: always ON on mobile ────────────────────
+    this.player.isShooting = true;
+
+    // ── Q (Ultimate) button – bottom right ────────────────
     const W = GAME_WIDTH, H = GAME_HEIGHT;
-    const btnY = H - 90;
-    const qBtnX = W - 80;
-    const eBtnX = W - 160;
-
-    // Q button – Ultimate (gold/orange glow)
-    const qBg = this.add.circle(qBtnX, btnY, 38, 0x221100, 0.88).setDepth(305).setScrollFactor(0);
-    qBg.setStrokeStyle(3, 0xcc8800, 1);
-    const qLabel = this.add.text(qBtnX, btnY, 'Q', {
-      fontSize:'22px', fontFamily:'Georgia,serif', color:'#ffcc00',
-      stroke:'#000', strokeThickness:3
+    const qBtnX = W - 72, qBtnY = H - 82;
+    const qG = this.add.graphics().setDepth(305).setScrollFactor(0);
+    this._drawMobileHexBtn(qG, qBtnX, qBtnY, 40, 0x1a0d00, 0xcc8800);
+    const qLabel = this.add.text(qBtnX, qBtnY-4, 'Q', {
+      fontSize:'24px', fontFamily:'Georgia,serif', color:'#ffcc00', stroke:'#000', strokeThickness:3
     }).setOrigin(0.5).setDepth(306).setScrollFactor(0);
-    const qSub = this.add.text(qBtnX, btnY+22, 'ULT', {
+    this.add.text(qBtnX, qBtnY+18, 'ULT', {
       fontSize:'9px', fontFamily:'Arial,sans-serif', color:'#cc8800'
     }).setOrigin(0.5).setDepth(306).setScrollFactor(0);
+    this.mobileQBtn = { x:qBtnX, y:qBtnY, r:44 };
+    this.mobileQG   = qG;
 
-    // E button – Interact (cyan glow)
-    const eBg = this.add.circle(eBtnX, btnY, 32, 0x001122, 0.88).setDepth(305).setScrollFactor(0);
-    eBg.setStrokeStyle(2, 0x0088aa, 1);
-    const eLabel = this.add.text(eBtnX, btnY, 'E', {
-      fontSize:'18px', fontFamily:'Georgia,serif', color:'#00ccdd',
-      stroke:'#000', strokeThickness:2
+    // ── E (Interact) button – above Q ─────────────────────
+    const eBtnX = W - 72, eBtnY = H - 158;
+    const eG = this.add.graphics().setDepth(305).setScrollFactor(0);
+    this._drawMobileHexBtn(eG, eBtnX, eBtnY, 30, 0x001122, 0x0088aa);
+    this.add.text(eBtnX, eBtnY-2, 'E', {
+      fontSize:'18px', fontFamily:'Georgia,serif', color:'#00ccdd', stroke:'#000', strokeThickness:2
     }).setOrigin(0.5).setDepth(306).setScrollFactor(0);
-    const eSub = this.add.text(eBtnX, btnY+19, 'OPEN', {
-      fontSize:'8px', fontFamily:'Arial,sans-serif', color:'#008899'
+    this.add.text(eBtnX, eBtnY+16, 'OPEN', {
+      fontSize:'8px', fontFamily:'Arial,sans-serif', color:'#006677'
     }).setOrigin(0.5).setDepth(306).setScrollFactor(0);
+    this.mobileEBtn = { x:eBtnX, y:eBtnY, r:34 };
 
-    // Store button hit areas for tap detection
-    this.mobileQBtn = { x:qBtnX, y:btnY, r:42 };
-    this.mobileEBtn = { x:eBtnX, y:btnY, r:36 };
-    this.mobileQBg  = qBg;
-    this.mobileEBg  = eBg;
-
-    // Helper: check if pointer hit a button
-    const hitBtn = (px, py, btn) => {
-      const dx = px - btn.x, dy = py - btn.y;
-      return dx*dx + dy*dy <= btn.r*btn.r;
+    // Helper: distance check
+    const hitBtn = (px,py,btn) => {
+      const dx=px-btn.x, dy=py-btn.y;
+      return dx*dx+dy*dy <= btn.r*btn.r;
     };
 
-    // multi-touch handlers
-    this.input.on('pointerdown', ptr => {
-      const sx = ptr.x, sy = ptr.y;   // screen coords
+    // ── JOYSTICK HIDE/SHOW helper ─────────────────────────
+    const showJoy = (sx, sy) => {
+      this.joyGraphics.clear().setVisible(true);
+      // Outer octagon ring
+      const g = this.joyGraphics;
+      g.lineStyle(3,0x224466,0.7);
+      for(let i=0;i<8;i++){
+        const a1=(i/8)*Math.PI*2-Math.PI/8, a2=((i+1)/8)*Math.PI*2-Math.PI/8;
+        g.lineBetween(sx+Math.cos(a1)*62, sy+Math.sin(a1)*62, sx+Math.cos(a2)*62, sy+Math.sin(a2)*62);
+      }
+      // Inner ring
+      g.lineStyle(2,0x336688,0.55); g.strokeCircle(sx,sy,44);
+      // Directional triangles
+      g.fillStyle(0x3388bb,0.50);
+      [[0],[Math.PI/2],[Math.PI],[Math.PI*1.5]].forEach(([a])=>{
+        g.fillTriangle(
+          sx+Math.cos(a)*54, sy+Math.sin(a)*54,
+          sx+Math.cos(a+0.3)*46, sy+Math.sin(a+0.3)*46,
+          sx+Math.cos(a-0.3)*46, sy+Math.sin(a-0.3)*46
+        );
+      });
+      this.jKnob.setPosition(sx,sy).setVisible(true);
+    };
+    const hideJoy = () => {
+      this.joyGraphics.setVisible(false);
+      this.jKnob.setVisible(false);
+    };
 
-      // Check Q button
-      if (hitBtn(sx, sy, this.mobileQBtn)) {
+    // ── Multi-touch event handlers ─────────────────────────
+    this.input.on('pointerdown', ptr => {
+      const sx=ptr.x, sy=ptr.y;
+
+      // Q button tap
+      if (hitBtn(sx,sy,this.mobileQBtn)) {
         if (this.ultimateReady) {
           this._activateUltimate();
-          // Flash feedback
-          this.tweens.add({ targets:qBg, alpha:0.3, duration:120, yoyo:true });
+          this.tweens.add({ targets:qG, alpha:0.4, duration:100, yoyo:true, onComplete:()=>qG.setAlpha(1) });
         }
         return;
       }
-
-      // Check E button
-      if (hitBtn(sx, sy, this.mobileEBtn)) {
+      // E button tap
+      if (hitBtn(sx,sy,this.mobileEBtn)) {
         this._tryInteract();
-        this.tweens.add({ targets:eBg, alpha:0.3, duration:120, yoyo:true });
+        this.tweens.add({ targets:eG, alpha:0.4, duration:100, yoyo:true, onComplete:()=>eG.setAlpha(1) });
         return;
       }
 
-      if (sx < GAME_WIDTH * 0.52) {
-        // LEFT side → joystick
-        if (!this.vjoy.active) {
-          this.vjoy = { active:true, pid:ptr.id, baseX:sx, baseY:sy, dx:0, dy:0 };
-          this.jBase.setPosition(sx,sy).setVisible(true);
-          this.jRing.setPosition(sx,sy).setVisible(true);
-          this.jKnob.setPosition(sx,sy).setVisible(true);
-        }
-      } else {
-        // RIGHT side (but not buttons) → fire & auto-aim
-        this.player.isShooting = true;
+      // Left side → joystick
+      if (sx < GAME_WIDTH*0.55 && !this.vjoy.active) {
+        this.vjoy = { active:true, pid:ptr.id, baseX:sx, baseY:sy, dx:0, dy:0 };
+        showJoy(sx, sy);
       }
     });
 
     this.input.on('pointermove', ptr => {
-      if (this.vjoy.active && ptr.id === this.vjoy.pid) {
-        const dx = ptr.x - this.vjoy.baseX;
-        const dy = ptr.y - this.vjoy.baseY;
-        const dist = Math.sqrt(dx*dx+dy*dy);
-        const max  = 58;
-        const clamped = Math.min(dist, max);
-        const ang  = Math.atan2(dy, dx);
-        this.vjoy.dx = (clamped/max)*Math.cos(ang);
-        this.vjoy.dy = (clamped/max)*Math.sin(ang);
+      if (this.vjoy.active && ptr.id===this.vjoy.pid) {
+        const dx=ptr.x-this.vjoy.baseX, dy=ptr.y-this.vjoy.baseY;
+        const dist=Math.sqrt(dx*dx+dy*dy), max=60;
+        const clamped=Math.min(dist,max), ang=Math.atan2(dy,dx);
+        this.vjoy.dx=(clamped/max)*Math.cos(ang);
+        this.vjoy.dy=(clamped/max)*Math.sin(ang);
         this.jKnob.setPosition(
-          this.vjoy.baseX + Math.cos(ang)*clamped,
-          this.vjoy.baseY + Math.sin(ang)*clamped
+          this.vjoy.baseX+Math.cos(ang)*clamped,
+          this.vjoy.baseY+Math.sin(ang)*clamped
         );
       }
     });
 
-    this.input.on('pointerup', ptr => {
-      if (ptr.id === this.vjoy.pid) {
+    const releaseJoy = (ptr) => {
+      if (this.vjoy.active && ptr.id===this.vjoy.pid) {
         this.vjoy = { active:false, pid:-1, baseX:0, baseY:0, dx:0, dy:0 };
-        this.jBase.setVisible(false); this.jRing.setVisible(false); this.jKnob.setVisible(false);
+        hideJoy();
       }
-      if (ptr.x >= GAME_WIDTH * 0.52) this.player.isShooting = false;
-    });
+    };
+    this.input.on('pointerup',     releaseJoy);
+    this.input.on('pointercancel', releaseJoy); // fix freeze on OS interrupt
 
-    // Pulse animation on Q button when ultimate is ready
-    this.time.addEvent({ delay:800, loop:true, callback:() => {
+    // ── Pulse Q button when ultimate ready ────────────────
+    this.time.addEvent({ delay:700, loop:true, callback:()=>{
       if (this.ultimateReady) {
-        this.tweens.add({ targets:qBg, scaleX:1.08, scaleY:1.08, duration:400, yoyo:true, ease:'Sine.easeInOut' });
+        this.tweens.add({ targets:qG, scaleX:1.07, scaleY:1.07, duration:350, yoyo:true, ease:'Sine.easeInOut' });
       }
     }});
+  }
+
+  _drawMobileHexBtn(gfx, cx, cy, r, fillColor, strokeColor) {
+    const pts = [];
+    for (let i=0;i<6;i++){
+      const a=(i/6)*Math.PI*2-Math.PI/6;
+      pts.push({ x:cx+Math.cos(a)*r, y:cy+Math.sin(a)*r });
+    }
+    gfx.fillStyle(fillColor, 0.92);
+    gfx.beginPath(); gfx.moveTo(pts[0].x,pts[0].y);
+    for(let i=1;i<6;i++) gfx.lineTo(pts[i].x,pts[i].y);
+    gfx.closePath(); gfx.fillPath();
+    gfx.lineStyle(2, strokeColor, 1);
+    gfx.beginPath(); gfx.moveTo(pts[0].x,pts[0].y);
+    for(let i=1;i<6;i++) gfx.lineTo(pts[i].x,pts[i].y);
+    gfx.closePath(); gfx.strokePath();
+    // Inner smaller hex for depth
+    gfx.lineStyle(1, strokeColor, 0.35);
+    gfx.beginPath();
+    for(let i=0;i<6;i++){
+      const a=(i/6)*Math.PI*2-Math.PI/6;
+      const px=cx+Math.cos(a)*(r*0.72), py=cy+Math.sin(a)*(r*0.72);
+      if(i===0) gfx.moveTo(px,py); else gfx.lineTo(px,py);
+    }
+    gfx.closePath(); gfx.strokePath();
   }
 
   // ── COLLISIONS ──────────────────────────────────────────
@@ -952,12 +1072,15 @@ class GameScene extends Phaser.Scene {
     const spd = p.stats.speed;
     let vx=0, vy=0;
 
-    if (this.isMobile && this.vjoy && this.vjoy.active) {
-      // joystick input
-      vx = this.vjoy.dx * spd;
-      vy = this.vjoy.dy * spd;
+    if (this.isMobile) {
+      // Mobile: joystick input (vx/vy stay 0 if joystick inactive = player stops)
+      if (this.vjoy && this.vjoy.active) {
+        vx = this.vjoy.dx * spd;
+        vy = this.vjoy.dy * spd;
+      }
+      // else vx=0, vy=0 → player stops immediately (fixes freeze)
     } else {
-      // keyboard input
+      // Desktop: keyboard input
       if (this.keys.left.isDown  || this.keys.leftA.isDown)  vx -= spd;
       if (this.keys.right.isDown || this.keys.rightA.isDown) vx += spd;
       if (this.keys.up.isDown    || this.keys.upA.isDown)    vy -= spd;
@@ -966,6 +1089,21 @@ class GameScene extends Phaser.Scene {
     }
 
     p.sprite.setVelocity(vx, vy);
+
+    // Aim direction
+    if (this.isMobile) {
+      // Auto-aim: face nearest enemy, or keep last direction
+      const nearest = this._getNearestEnemy(p.sprite.x, p.sprite.y, 900);
+      if (nearest) {
+        this.mouseWorld.x = nearest.x;
+        this.mouseWorld.y = nearest.y;
+      } else if (vx!==0||vy!==0) {
+        // Face movement direction
+        this.mouseWorld.x = p.sprite.x + vx;
+        this.mouseWorld.y = p.sprite.y + vy;
+      }
+    }
+
     const ang = Phaser.Math.Angle.Between(p.sprite.x,p.sprite.y,this.mouseWorld.x,this.mouseWorld.y);
     p.sprite.setRotation(ang + Math.PI/2);
     this.playerGlow.setPosition(p.sprite.x, p.sprite.y);
@@ -979,10 +1117,10 @@ class GameScene extends Phaser.Scene {
     if (time - this.lastFireTime < rate) return;
     this.lastFireTime = time;
 
-    // Mobile: auto-aim at nearest enemy
+    // Mobile: skip if no enemy in range
     if (this.isMobile) {
-      const nearest = this._getNearestEnemy(p.sprite.x, p.sprite.y, 700);
-      if (nearest) { this.mouseWorld.x = nearest.x; this.mouseWorld.y = nearest.y; }
+      const nearest = this._getNearestEnemy(p.sprite.x, p.sprite.y, 800);
+      if (!nearest) return;
     }
 
     const ang = Phaser.Math.Angle.Between(p.sprite.x,p.sprite.y,this.mouseWorld.x,this.mouseWorld.y);
@@ -1741,7 +1879,7 @@ class GameScene extends Phaser.Scene {
 
 
 // ═══════════════════════════════════════════════════════════
-// UI SCENE  –  HUD overlay (runs parallel with GameScene)
+// UI SCENE  –  Neon Dark Fantasy HUD
 // ═══════════════════════════════════════════════════════════
 class UIScene extends Phaser.Scene {
   constructor(){ super({ key:'UIScene' }); }
@@ -1749,67 +1887,115 @@ class UIScene extends Phaser.Scene {
 
   create(){
     const W=GAME_WIDTH, H=GAME_HEIGHT;
+    const D = 102; // base depth
 
-    // ── XP BAR (top) ────────────────────────────────────
-    this.add.rectangle(W/2, 8, W-40, 14, 0x0a0a14,0.85).setScrollFactor(0).setDepth(100);
-    this.xpFill = this.add.rectangle(20, 8, 0, 10, 0x00ffaa).setScrollFactor(0).setDepth(101).setOrigin(0,0.5);
-    this.xpText = this.add.text(W/2, 8,'Level 1',{fontSize:'11px',fontFamily:'Georgia,serif',color:'#ffffff'})
-      .setScrollFactor(0).setDepth(102).setOrigin(0.5);
+    // ── XP BAR – top full width, cyan neon ─────────────────
+    // Track bg
+    const xpBg = this.add.graphics().setScrollFactor(0).setDepth(D);
+    xpBg.fillStyle(0x020810,0.90); xpBg.fillRoundedRect(10,5,W-20,12,6);
+    xpBg.lineStyle(1,0x003344,0.8); xpBg.strokeRoundedRect(10,5,W-20,12,6);
+    this.xpFill = this.add.graphics().setScrollFactor(0).setDepth(D+1);
+    this.xpGlow = this.add.graphics().setScrollFactor(0).setDepth(D);
+    this.xpText = this.add.text(W/2, 11,'Level 1',{fontSize:'9px',fontFamily:'Georgia,serif',color:'#33ddff',stroke:'#000',strokeThickness:2})
+      .setScrollFactor(0).setDepth(D+2).setOrigin(0.5);
 
-    // ── TIMER (top center) ──────────────────────────────
-    this.add.rectangle(W/2, 30, 118, 28, 0x0a0a14,0.85).setScrollFactor(0).setDepth(100).setStrokeStyle(1,0x334455);
-    this.timerTxt = this.add.text(W/2, 30,'10:00',{fontSize:'18px',fontFamily:'Georgia,serif',color:'#ffffff',stroke:'#000',strokeThickness:2})
-      .setScrollFactor(0).setDepth(101).setOrigin(0.5);
+    // ── TIMER – top center in stone box ───────────────────
+    const timerBg = this.add.graphics().setScrollFactor(0).setDepth(D);
+    timerBg.fillStyle(0x030d18,0.92); timerBg.fillRoundedRect(W/2-52,22,104,28,5);
+    timerBg.lineStyle(1,0x224466,0.9); timerBg.strokeRoundedRect(W/2-52,22,104,28,5);
+    // Corner accents
+    timerBg.lineStyle(2,0x0066aa,0.8);
+    timerBg.lineBetween(W/2-52,22,W/2-44,22); timerBg.lineBetween(W/2-52,22,W/2-52,30);
+    timerBg.lineBetween(W/2+52,22,W/2+44,22); timerBg.lineBetween(W/2+52,22,W/2+52,30);
+    timerBg.lineBetween(W/2-52,50,W/2-44,50); timerBg.lineBetween(W/2-52,50,W/2-52,42);
+    timerBg.lineBetween(W/2+52,50,W/2+44,50); timerBg.lineBetween(W/2+52,50,W/2+52,42);
+    this.timerTxt = this.add.text(W/2,36,'10:00',{fontSize:'18px',fontFamily:'Georgia,serif',color:'#aaddff',stroke:'#000',strokeThickness:3})
+      .setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
 
-    // ── SCORE (top right) ───────────────────────────────
-    this.scoreTxt = this.add.text(W-16, 16,'SCORE: 0',{fontSize:'13px',fontFamily:'Georgia,serif',color:'#ffcc00',stroke:'#000',strokeThickness:2})
-      .setScrollFactor(0).setDepth(101).setOrigin(1,0.5);
+    // ── SCORE – top right ─────────────────────────────────
+    const scoreBg = this.add.graphics().setScrollFactor(0).setDepth(D);
+    scoreBg.fillStyle(0x030d18,0.88); scoreBg.fillRoundedRect(W-160,20,150,26,4);
+    scoreBg.lineStyle(1,0x553300,0.7); scoreBg.strokeRoundedRect(W-160,20,150,26,4);
+    this.scoreTxt = this.add.text(W-85,33,'SCORE: 0',{fontSize:'13px',fontFamily:'Georgia,serif',color:'#ffcc00',stroke:'#000',strokeThickness:2})
+      .setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
 
-    // ── LEVEL BADGE (top left) ──────────────────────────
-    this.add.circle(38,38,26,0x111122,0.9).setScrollFactor(0).setDepth(100).setStrokeStyle(2,0x664400);
-    this.lvlTxt = this.add.text(38,38,'LV\n1',{fontSize:'11px',fontFamily:'Georgia,serif',color:'#ffcc00',align:'center',stroke:'#000',strokeThickness:2})
-      .setScrollFactor(0).setDepth(101).setOrigin(0.5);
+    // ── LEVEL + WEAPON badge – top left ───────────────────
+    const badgeBg = this.add.graphics().setScrollFactor(0).setDepth(D);
+    badgeBg.fillStyle(0x030d18,0.92); badgeBg.fillRoundedRect(10,20,150,52,5);
+    badgeBg.lineStyle(1,0x224466,0.8); badgeBg.strokeRoundedRect(10,20,150,52,5);
+    // Hexagonal level badge
+    this._drawHexagon(badgeBg, 36, 46, 20, 0x1133aa, 0.9, 2, 0x3388ff);
+    this.lvlTxt = this.add.text(36,46,'LV\n1',{fontSize:'10px',fontFamily:'Georgia,serif',color:'#66bbff',align:'center',stroke:'#000',strokeThickness:2})
+      .setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
+    this.weapTxt = this.add.text(102,40,'Dagger',{fontSize:'13px',fontFamily:'Georgia,serif',color:'#88bbff',stroke:'#000',strokeThickness:2})
+      .setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
+    this.weapTypeTxt = this.add.text(102,55,'🗡️',{fontSize:'13px'})
+      .setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
 
-    // ── HP BAR (bottom center) ──────────────────────────
-    this.add.rectangle(W/2, H-32, 284, 22, 0x330000,0.9).setScrollFactor(0).setDepth(100).setStrokeStyle(1,0x660000);
-    this.hpFill = this.add.rectangle(W/2-140, H-32, 280, 18, 0xff2222).setScrollFactor(0).setDepth(101).setOrigin(0,0.5);
-    this.hpTxt  = this.add.text(W/2, H-32,'150/150',{fontSize:'13px',fontFamily:'Georgia,serif',color:'#fff',stroke:'#000',strokeThickness:2})
-      .setScrollFactor(0).setDepth(102).setOrigin(0.5);
+    // ── HP BAR – bottom center, red neon ──────────────────
+    const hpBarW = 300, hpBarX = W/2 - hpBarW/2, hpBarY = H-28;
+    const hpBg = this.add.graphics().setScrollFactor(0).setDepth(D);
+    hpBg.fillStyle(0x1a0000,0.92); hpBg.fillRoundedRect(hpBarX-2, hpBarY-9, hpBarW+4, 20, 4);
+    hpBg.lineStyle(1,0x660000,0.9); hpBg.strokeRoundedRect(hpBarX-2, hpBarY-9, hpBarW+4, 20, 4);
+    // HP bar glow bg
+    this.hpGlowBg = this.add.graphics().setScrollFactor(0).setDepth(D);
+    this.hpFill = this.add.graphics().setScrollFactor(0).setDepth(D+1);
+    this.hpTxt  = this.add.text(W/2, hpBarY+1,'150/150',{fontSize:'12px',fontFamily:'Georgia,serif',color:'#fff',stroke:'#000',strokeThickness:2})
+      .setScrollFactor(0).setDepth(D+2).setOrigin(0.5);
+    // HP label
+    this.add.text(hpBarX-8, hpBarY+1,'HP',{fontSize:'10px',fontFamily:'Georgia,serif',color:'#ff4444',stroke:'#000',strokeThickness:2})
+      .setScrollFactor(0).setDepth(D+2).setOrigin(1,0.5);
+    this._hpBarX = hpBarX; this._hpBarW = hpBarW; this._hpBarY = hpBarY;
 
-    // ── WEAPON (bottom left) ────────────────────────────
-    this.add.rectangle(65,H-52,110,34,0x111122,0.88).setScrollFactor(0).setDepth(100).setStrokeStyle(1,0x2255cc);
-    this.weapTxt = this.add.text(65,H-52,'🗡️ Dagger',{fontSize:'13px',fontFamily:'Georgia,serif',color:'#88aaff',stroke:'#000',strokeThickness:2})
-      .setScrollFactor(0).setDepth(101).setOrigin(0.5);
+    // ── ULTIMATE box – bottom right ────────────────────────
+    const ultBg = this.add.graphics().setScrollFactor(0).setDepth(D);
+    ultBg.fillStyle(0x0d0a00,0.92); ultBg.fillRoundedRect(W-102,H-66,92,58,5);
+    this.ultBorder = this.add.graphics().setScrollFactor(0).setDepth(D+1);
+    this.add.text(W-56,H-60,'ULTIMATE',{fontSize:'8px',fontFamily:'Georgia,serif',color:'#554400'})
+      .setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
+    this.ultKey = this.add.text(W-56,H-46,'[Q]',{fontSize:'20px',fontFamily:'Georgia,serif',color:'#ffaa00',stroke:'#000',strokeThickness:3})
+      .setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
+    this.ultCdTxt = this.add.text(W-56,H-31,'READY',{fontSize:'11px',fontFamily:'Georgia,serif',color:'#ffff00',stroke:'#000',strokeThickness:2})
+      .setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
 
-    // ── ULTIMATE BOX (bottom right) ─────────────────────
-    this.ultBox = this.add.rectangle(W-54,H-52,84,52,0x111111,0.88).setScrollFactor(0).setDepth(100).setStrokeStyle(2,0x664400);
-    this.add.text(W-54,H-69,'ULTIMATE',{fontSize:'9px',fontFamily:'Georgia,serif',color:'#666'}).setScrollFactor(0).setDepth(101).setOrigin(0.5);
-    this.ultKey = this.add.text(W-54,H-52,'[Q]',{fontSize:'20px',fontFamily:'Georgia,serif',color:'#ffaa00',stroke:'#000',strokeThickness:3})
-      .setScrollFactor(0).setDepth(101).setOrigin(0.5);
-    this.ultCdTxt = this.add.text(W-54,H-38,'READY',{fontSize:'11px',fontFamily:'Georgia,serif',color:'#ffff00'})
-      .setScrollFactor(0).setDepth(101).setOrigin(0.5);
+    // ── DASH & ARMOR – bottom right area ─────────────────
+    this.dashTxt  = this.add.text(W-116,H-42,'',{fontSize:'11px',fontFamily:'Georgia,serif',color:'#6688ff'}).setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
+    this.armorTxt = this.add.text(W/2,H-14,'',{fontSize:'10px',fontFamily:'Georgia,serif',color:'#5588aa'}).setScrollFactor(0).setDepth(D+1).setOrigin(0.5);
 
-    // ── DASH INDICATOR (bottom right - 2) ───────────────
-    this.dashTxt = this.add.text(W-130, H-44,'',{fontSize:'11px',fontFamily:'Georgia,serif',color:'#8888ff'})
-      .setScrollFactor(0).setDepth(101).setOrigin(0.5);
-
-    // ── ARMOR LABEL ─────────────────────────────────────
-    this.armorTxt = this.add.text(W/2, H-16,'',{fontSize:'10px',fontFamily:'Georgia,serif',color:'#6688aa'})
-      .setScrollFactor(0).setDepth(101).setOrigin(0.5);
-
-    // ── MESSAGE TEXT (center) ───────────────────────────
-    this.msgTxt = this.add.text(W/2, H*0.5-100,'',{
-      fontSize:'24px',fontFamily:'Georgia,serif',color:'#ffffff',stroke:'#000',strokeThickness:4
+    // ── MESSAGE TEXT ──────────────────────────────────────
+    this.msgTxt = this.add.text(W/2, H*0.40,'',{
+      fontSize:'26px',fontFamily:'Georgia,serif',color:'#ffffff',stroke:'#000',strokeThickness:5
     }).setScrollFactor(0).setDepth(200).setOrigin(0.5).setAlpha(0);
 
-    // ── LOOT POPUP ──────────────────────────────────────
+    // ── LOOT POPUP ────────────────────────────────────────
     this._buildLootPopup(W,H);
+  }
+
+  _drawHexagon(gfx, cx, cy, r, fillColor, fillAlpha, lineW, lineColor) {
+    const pts = [];
+    for (let i=0;i<6;i++){
+      const a = (i/6)*Math.PI*2 - Math.PI/6;
+      pts.push({ x: cx+Math.cos(a)*r, y: cy+Math.sin(a)*r });
+    }
+    gfx.fillStyle(fillColor, fillAlpha);
+    gfx.beginPath();
+    gfx.moveTo(pts[0].x, pts[0].y);
+    for (let i=1;i<6;i++) gfx.lineTo(pts[i].x, pts[i].y);
+    gfx.closePath(); gfx.fillPath();
+    gfx.lineStyle(lineW, lineColor, 1);
+    gfx.beginPath();
+    gfx.moveTo(pts[0].x, pts[0].y);
+    for (let i=1;i<6;i++) gfx.lineTo(pts[i].x, pts[i].y);
+    gfx.closePath(); gfx.strokePath();
   }
 
   _buildLootPopup(W,H){
     this.lootCon = this.add.container(W/2, H/2).setScrollFactor(0).setDepth(500).setAlpha(0);
-    const bg    = this.add.rectangle(0,0,340,160,0x0d1020,0.96).setStrokeStyle(2,0x445566);
-    const title = this.add.text(0,-55,'CHEST OPENED!',{fontSize:'17px',fontFamily:'Georgia,serif',color:'#ffcc00',stroke:'#000',strokeThickness:3}).setOrigin(0.5);
+    const bg = this.add.graphics();
+    bg.fillStyle(0x060d18,0.97); bg.fillRoundedRect(-170,-80,340,160,8);
+    bg.lineStyle(2,0x224466,1); bg.strokeRoundedRect(-170,-80,340,160,8);
+    bg.lineStyle(1,0x0066aa,0.5); bg.strokeRoundedRect(-164,-74,328,148,6);
+    const title = this.add.text(0,-55,'⬡  CHEST OPENED  ⬡',{fontSize:'16px',fontFamily:'Georgia,serif',color:'#ffcc00',stroke:'#000',strokeThickness:3}).setOrigin(0.5);
     this.lootName  = this.add.text(0,-22,'',{fontSize:'16px',fontFamily:'Georgia,serif',color:'#fff',stroke:'#000',strokeThickness:2}).setOrigin(0.5);
     this.lootRar   = this.add.text(0, 8,'',{fontSize:'13px',fontFamily:'Georgia,serif',color:'#888'}).setOrigin(0.5);
     this.lootStats = this.add.text(0,34,'',{fontSize:'12px',fontFamily:'Georgia,serif',color:'#aaffaa'}).setOrigin(0.5);
@@ -1841,38 +2027,60 @@ class UIScene extends Phaser.Scene {
 
   updateHUD(d){
     // XP bar
-    const xpRatio=(d.xpToNext>0)?Math.min(d.xp/d.xpToNext,1):0;
-    this.xpFill.setSize(Math.max(0,(GAME_WIDTH-40)*xpRatio),10);
-    this.xpText.setText(`Level ${d.level}${d.level>=MAX_LEVEL?' (MAX)':''} — ${d.xp}/${d.xpToNext} XP`);
+    const xpRatio = (d.xpToNext>0) ? Math.min(d.xp/d.xpToNext,1) : 0;
+    const xpW = Math.max(0,(GAME_WIDTH-24)*xpRatio);
+    this.xpFill.clear();
+    if (xpW>2) {
+      this.xpFill.fillStyle(0x00aacc,0.75); this.xpFill.fillRoundedRect(12,6,xpW,10,5);
+      this.xpFill.fillStyle(0x44eeff,0.55); this.xpFill.fillRect(12,6,xpW,4);
+    }
+    this.xpText.setText(`LV ${d.level}${d.level>=MAX_LEVEL?' MAX':''} — ${d.xp}/${d.xpToNext} XP`);
     this.lvlTxt.setText(`LV\n${d.level}`);
 
     // HP bar
-    const hpR=Math.max(0,d.hp)/d.maxHp;
-    this.hpFill.setSize(Math.max(0,280*hpR),18);
-    this.hpFill.setFillStyle(hpR>0.5?0xff2222:hpR>0.25?0xff8800:0xdd0000);
-    this.hpTxt.setText(`HP: ${Math.max(0,Math.round(d.hp))} / ${d.maxHp}`);
+    const hpR = Math.max(0, d.hp) / d.maxHp;
+    const hpW = Math.max(0, this._hpBarW * hpR);
+    const hpCol = hpR>0.5 ? 0xdd2222 : hpR>0.25 ? 0xff6600 : 0xff0000;
+    const hpGlow = hpR>0.5 ? 0xff4444 : hpR>0.25 ? 0xff8800 : 0xff2222;
+    this.hpGlowBg.clear();
+    this.hpFill.clear();
+    if (hpW>2) {
+      this.hpGlowBg.fillStyle(hpGlow, 0.18); this.hpGlowBg.fillRoundedRect(this._hpBarX-4, this._hpBarY-11, hpW+8, 24, 4);
+      this.hpFill.fillStyle(hpCol,0.95); this.hpFill.fillRoundedRect(this._hpBarX, this._hpBarY-8, hpW, 16, 3);
+      this.hpFill.fillStyle(0xffffff,0.15); this.hpFill.fillRoundedRect(this._hpBarX, this._hpBarY-8, hpW, 6, 3);
+    }
+    this.hpTxt.setText(`${Math.max(0,Math.round(d.hp))} / ${d.maxHp}`);
 
     // Timer
     const min=Math.floor(d.timer/60), sec=d.timer%60;
     this.timerTxt.setText(`${min}:${sec.toString().padStart(2,'0')}`);
-    this.timerTxt.setColor(d.timer<=60?(d.timer%2<1?'#ff4444':'#ffaa00'):'#ffffff');
+    this.timerTxt.setColor(d.timer<=60 ? (d.timer%2<1?'#ff4444':'#ffaa00') : '#aaddff');
 
     // Score
-    this.scoreTxt.setText(`SCORE: ${d.score.toLocaleString()}`);
+    this.scoreTxt.setText(`${d.score.toLocaleString()}`);
 
     // Weapon
     const wIcons={Dagger:'🗡️',Bow:'🏹',Axe:'🪓',Staff:'🪄'};
-    this.weapTxt.setText(`${wIcons[d.weapon.name]||'⚔️'} ${d.weapon.name}`);
+    this.weapTxt.setText(d.weapon.name);
+    this.weapTypeTxt.setText(wIcons[d.weapon.name]||'⚔️');
 
-    // Ultimate
-    if(d.ultReady){ this.ultKey.setColor('#ffaa00'); this.ultCdTxt.setText('READY').setColor('#ffff00'); this.ultBox.setStrokeStyle(2,0xffaa00); }
-    else { this.ultKey.setColor('#555'); this.ultCdTxt.setText(`${Math.ceil(d.ultCd)}s`).setColor('#777'); this.ultBox.setStrokeStyle(2,0x664400); }
+    // Ultimate – neon border when ready
+    this.ultBorder.clear();
+    if (d.ultReady) {
+      this.ultBorder.lineStyle(2,0xffaa00,1); this.ultBorder.strokeRoundedRect(GAME_WIDTH-102,GAME_HEIGHT-66,92,58,5);
+      this.ultKey.setColor('#ffcc00');
+      this.ultCdTxt.setText('READY').setColor('#ffff00');
+    } else {
+      this.ultBorder.lineStyle(2,0x443300,0.6); this.ultBorder.strokeRoundedRect(GAME_WIDTH-102,GAME_HEIGHT-66,92,58,5);
+      this.ultKey.setColor('#665500');
+      this.ultCdTxt.setText(`${Math.ceil(d.ultCd)}s`).setColor('#886600');
+    }
 
     // Dash
-    if(d.hasDash) this.dashTxt.setText(d.dashCd>0?`DASH ${Math.ceil(d.dashCd)}s`:'DASH RDY').setColor(d.dashCd>0?'#555':'#8888ff');
+    if(d.hasDash) this.dashTxt.setText(d.dashCd>0?`DASH ${Math.ceil(d.dashCd)}s`:'DASH RDY').setColor(d.dashCd>0?'#444466':'#8888ff');
 
     // Armor
-    if(d.armor>0) this.armorTxt.setText(`DEF: ${Math.round(d.armor*100)}%`);
+    if(d.armor>0) this.armorTxt.setText(`DEF ${Math.round(d.armor*100)}%`);
   }
 }
 
