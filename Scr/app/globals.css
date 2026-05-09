@@ -1,0 +1,235 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Design Tokens
+   ============================================================ */
+:root {
+  --primary: #1B5E20;
+  --primary-dark: #0F3E13;
+  --primary-light: #2E7D32;
+  --primary-soft: #E8F3E9;
+  --gold: #C8A951;
+  --gold-light: #E5CB7A;
+  --gold-dark: #A88830;
+
+  --bg: #FFF8E7;
+  --bg-elev: #FFFFFF;
+  --bg-soft: #FBF3DC;
+  --surface: #FFFFFF;
+  --border: #E8DCC0;
+  --border-soft: #F0E6CF;
+
+  --text: #1A1A1A;
+  --text-muted: #5A5A5A;
+  --text-soft: #8A7E5C;
+
+  --shadow-sm: 0 1px 2px rgba(27, 94, 32, 0.06);
+  --shadow: 0 4px 14px rgba(27, 94, 32, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 32px rgba(27, 94, 32, 0.12);
+}
+
+.dark {
+  --primary: #4CAF50;
+  --primary-dark: #2E7D32;
+  --primary-light: #66BB6A;
+  --primary-soft: #1B2E1F;
+  --gold: #E5CB7A;
+  --gold-light: #F0DA94;
+  --gold-dark: #C8A951;
+
+  --bg: #0A0F0B;
+  --bg-elev: #131A14;
+  --bg-soft: #182019;
+  --surface: #161F18;
+  --border: #243027;
+  --border-soft: #1C2620;
+
+  --text: #F0F0E8;
+  --text-muted: #B0B0A8;
+  --text-soft: #8A8A82;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  transition: background-color .3s ease, color .3s ease;
+  font-family: var(--font-noto-kufi), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--primary-dark);
+}
+
+/* خلفية زخرفية إسلامية */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(200, 169, 81, .06), transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(27, 94, 32, .06), transparent 40%);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* ============================================================
+   Components
+   ============================================================ */
+@layer components {
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-semibold text-sm transition-all duration-200 border-[1.5px] border-transparent;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 6px 16px rgba(27, 94, 32, .25);
+  }
+  .btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(27, 94, 32, .3);
+  }
+  .btn-outline {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  .btn-outline:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .icon-btn {
+    @apply w-10 h-10 rounded-xl grid place-items-center transition-all duration-200;
+    color: var(--text-muted);
+  }
+  .icon-btn:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  .verse-end-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 1.6em;
+    height: 1.6em;
+    margin: 0 6px;
+    vertical-align: middle;
+    color: var(--gold-dark);
+    font-family: var(--font-noto-kufi);
+    font-size: .55em;
+    font-weight: 700;
+    position: relative;
+    background: radial-gradient(circle, var(--bg) 60%, transparent 62%);
+  }
+  .verse-end-mark::before {
+    content: '۝';
+    position: absolute;
+    font-size: 2.2em;
+    color: var(--gold);
+    font-family: var(--font-amiri);
+    z-index: -1;
+    font-weight: 400;
+  }
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+.skeleton {
+  background: linear-gradient(90deg, var(--border-soft), var(--border), var(--border-soft));
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* البسملة */
+.bismillah-decorated {
+  text-align: center;
+  font-family: var(--font-amiri), serif;
+  color: var(--primary);
+  position: relative;
+  padding: 20px;
+  border-top: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  margin: 30px 0;
+}
+.bismillah-decorated::before,
+.bismillah-decorated::after {
+  content: '۞';
+  color: var(--gold);
+  margin: 0 14px;
+  font-size: .8em;
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 248, 231, 0.85);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+}
+.dark .glass {
+  background: rgba(10, 15, 11, 0.8);
+}
+
+/* Print */
+@media print {
+  .no-print { display: none !important; }
+}
